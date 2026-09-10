@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2020",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "files": [
+    "node_modules/@zeppos/device-types/dist/index.d.ts"
+  ],
+  "include": [
+    "app.js",
+    "watchface/**/*.js"
+  ]
+}
