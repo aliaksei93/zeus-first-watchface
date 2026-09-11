@@ -37,8 +37,8 @@ const WEEKDAY_IMAGES = [
   DATE_ASSET_ROOT + 'weekday-sat.png',
   DATE_ASSET_ROOT + 'weekday-sun.png',
 ]
-const WEEKDAY_PREFIX_WIDTHS = [75, 63, 71, 67, 49, 60, 67]
-const DATE_DIGITS_WIDTH = 154
+const WEEKDAY_PREFIX_WIDTHS = [70, 58, 67, 62, 47, 55, 62]
+const DATE_DIGITS_WIDTH = 142
 
 let screenWidth = 480
 let screenHeight = 480
@@ -47,7 +47,7 @@ let timeSensor = null
 let refreshTimer = null
 let normalHourDigits = null
 let normalMinuteDigits = null
-let normalSecondDigits = null
+let normalSecondImages = []
 let normalWeekdayImage = null
 let normalDateImages = []
 
@@ -118,14 +118,14 @@ function createAlarm(level) {
   })
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(118),
-    y: scaled(114),
-    w: scaled(81),
-    h: scaled(28),
+    x: scaled(110),
+    y: scaled(120),
+    w: scaled(53),
+    h: scaled(22),
     font_array: ALARM_DIGITS,
     dot_image: ALARM_ASSET_ROOT + 'colon.png',
     invalid_image: ALARM_ASSET_ROOT + 'empty.png',
-    h_space: scaled(1),
+    h_space: 0,
     padding: true,
     align_h: hmUI.align.LEFT,
     type: hmUI.data_type.ALARM_CLOCK,
@@ -134,12 +134,12 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
-  createImage(317, 116, WEATHER_ASSET_ROOT + 'thunder.png', level, 28, 28)
-  createImage(350, 117, WEATHER_ASSET_ROOT + 'plus.png', level, 12, 21)
+  createImage(320, 117, WEATHER_ASSET_ROOT + 'thunder.png', level, 24, 24)
+  createImage(350, 118, WEATHER_ASSET_ROOT + 'plus.png', level, 12, 21)
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
     x: scaled(350),
-    y: scaled(117),
+    y: scaled(118),
     w: scaled(50),
     h: scaled(21),
     font_array: WEATHER_DIGITS,
@@ -160,10 +160,10 @@ function createWeather(level) {
 
 function createTime(level) {
   normalHourDigits = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(41),
-    y: scaled(172),
-    w: scaled(139),
-    h: scaled(104),
+    x: scaled(116),
+    y: scaled(191),
+    w: scaled(111),
+    h: scaled(98),
     font_array: PRIMARY_TIME_DIGITS,
     h_space: scaled(-1),
     align_h: hmUI.align.LEFT,
@@ -171,13 +171,13 @@ function createTime(level) {
     show_level: level,
   })
 
-  createImage(154, 188, PRIMARY_TIME_ASSET_ROOT + 'colon.png', level, 57, 93)
+  createImage(227, 191, PRIMARY_TIME_ASSET_ROOT + 'colon.png', level, 24, 98)
 
   normalMinuteDigits = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(185),
-    y: scaled(172),
-    w: scaled(139),
-    h: scaled(104),
+    x: scaled(251),
+    y: scaled(191),
+    w: scaled(111),
+    h: scaled(98),
     font_array: PRIMARY_TIME_DIGITS,
     h_space: scaled(-1),
     align_h: hmUI.align.LEFT,
@@ -185,34 +185,25 @@ function createTime(level) {
     show_level: level,
   })
 
-  createImage(304, 214, SECOND_TIME_ASSET_ROOT + 'colon.png', level, 41, 66)
-
-  normalSecondDigits = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(337),
-    y: scaled(210),
-    w: scaled(89),
-    h: scaled(78),
-    font_array: SECOND_TIME_DIGITS,
-    h_space: scaled(-1),
-    align_h: hmUI.align.LEFT,
-    text: '',
-    show_level: level,
-  })
+  normalSecondImages = [
+    createImage(374, 235, SECOND_TIME_DIGITS[0], level, 23, 42),
+    createImage(396, 235, SECOND_TIME_DIGITS[0], level, 23, 42),
+  ]
 }
 
 function createDate(level) {
-  normalWeekdayImage = createImage(128, 307, WEEKDAY_IMAGES[0], level)
+  normalWeekdayImage = createImage(134, 303, WEEKDAY_IMAGES[0], level)
 
   normalDateImages = []
-  let x = 199
+  let x = 204
   const placeholder = '00.00.0000'
 
   for (let index = 0; index < placeholder.length; index += 1) {
     const isDot = placeholder[index] === '.'
-    const width = isDot ? 9 : 17
+    const width = isDot ? 7 : 16
     const src = isDot ? DATE_ASSET_ROOT + 'dot.png' : DATE_DIGITS[0]
 
-    normalDateImages.push(createImage(x, 307, src, level, width, 36))
+    normalDateImages.push(createImage(x, 303, src, level, width, 30))
     x += width
   }
 }
@@ -220,17 +211,28 @@ function createDate(level) {
 function updateTime() {
   const weekdayIndex = Math.max(0, Math.min(6, timeSensor.getDay() - 1))
   const weekdayWidth = WEEKDAY_PREFIX_WIDTHS[weekdayIndex]
-  const dateStartX = Math.round((480 - weekdayWidth - DATE_DIGITS_WIDTH) / 2)
+  const dateStartX = Math.floor((480 - weekdayWidth - DATE_DIGITS_WIDTH) / 2)
 
   normalHourDigits.setProperty(hmUI.prop.TEXT, padded(timeSensor.getHours()))
   normalMinuteDigits.setProperty(hmUI.prop.TEXT, padded(timeSensor.getMinutes()))
-  normalSecondDigits.setProperty(hmUI.prop.TEXT, padded(timeSensor.getSeconds()))
+  const secondText = padded(timeSensor.getSeconds())
+
+  for (let index = 0; index < secondText.length; index += 1) {
+    normalSecondImages[index].setProperty(hmUI.prop.MORE, {
+      x: scaled(374 + index * 22),
+      y: scaled(235),
+      w: scaled(23),
+      h: scaled(42),
+      src: SECOND_TIME_DIGITS[Number(secondText[index])],
+      show_level: hmUI.show_level.ONLY_NORMAL,
+    })
+  }
   normalWeekdayImage.setProperty(hmUI.prop.MORE, {
     x: scaled(dateStartX),
-    y: scaled(307),
+    y: scaled(303),
     src: WEEKDAY_IMAGES[weekdayIndex],
     w: scaled(weekdayWidth),
-    h: scaled(36),
+    h: scaled(30),
     show_level: hmUI.show_level.ONLY_NORMAL,
   })
 
@@ -241,14 +243,14 @@ function updateTime() {
 
   for (let index = 0; index < dateText.length; index += 1) {
     const isDot = dateText[index] === '.'
-    const width = isDot ? 9 : 17
+    const width = isDot ? 7 : 16
     const src = isDot ? DATE_ASSET_ROOT + 'dot.png' : DATE_DIGITS[Number(dateText[index])]
 
     normalDateImages[index].setProperty(hmUI.prop.MORE, {
       x: scaled(dateX),
-      y: scaled(307),
+      y: scaled(303),
       w: scaled(width),
-      h: scaled(36),
+      h: scaled(30),
       src: src,
       show_level: hmUI.show_level.ONLY_NORMAL,
     })
@@ -301,8 +303,8 @@ WatchFace({
 
     hmUI.createWidget(hmUI.widget.IMG_TIME, {
       hour_zero: 1,
-      hour_startX: scaled(63),
-      hour_startY: scaled(183),
+      hour_startX: scaled(116),
+      hour_startY: scaled(191),
       hour_array: AOD_DIGITS,
       hour_space: scaled(-1),
       hour_unit_sc: AOD_ASSET_ROOT + 'colon.png',
