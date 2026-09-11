@@ -12,17 +12,17 @@
   },
   "screens": {
     "normal": {
-      "name": "Watchface / Mode=Normal / Size=480",
+      "name": "Screen / Watchface / Normal · 480",
       "referenceImage": "normal.png",
       "required": true
     },
     "aod": {
-      "name": "Watchface / Mode=AOD / Size=480",
+      "name": "Screen / Watchface / AOD · 480",
       "referenceImage": "aod.png",
       "required": true
     },
     "tapZones": {
-      "name": "Specs / Tap Zones / 480",
+      "name": "Screen / Specs / Interaction map · 480",
       "required": false
     }
   },
