@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "direction": "design-system-to-repository",
+  "designSystem": {
+    "provider": "penpot",
+    "name": "Retro Digital",
+    "readOnly": true
+  },
+  "repository": {
+    "target": "480x480-amazfit-balance-2",
+    "designWidth": 480
+  },
+  "screens": {
+    "normal": {
+      "name": "Watchface / Mode=Normal / Size=480",
+      "referenceImage": "normal.png",
+      "required": true
+    },
+    "aod": {
+      "name": "Watchface / Mode=AOD / Size=480",
+      "referenceImage": "aod.png",
+      "required": true
+    },
+    "tapZones": {
+      "name": "Specs / Tap Zones / 480",
+      "required": false
+    }
+  },
+  "verification": {
+    "screens": [
+      "normal",
+      "aod"
+    ],
+    "maxCorrectionLoops": 2,
+    "toolCallBudget": 50
+  }
+}

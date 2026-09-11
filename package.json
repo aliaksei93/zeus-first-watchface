@@ -2,10 +2,13 @@
   "name": "retro-digital-watchface",
   "private": true,
   "scripts": {
-    "dev": "zeus dev",
-    "build": "zeus build",
+    "assets": "bash scripts/generate-watchface-assets.sh",
+    "build": "zeus build -t 480x480-amazfit-balance-2",
+    "check": "bash scripts/check-watchface.sh",
+    "dev": "bash scripts/dev-watchface.sh",
     "preview": "zeus preview -t 480x480-amazfit-balance-2",
-    "status": "zeus status"
+    "status": "zeus status",
+    "visual:diff": "bash scripts/create-visual-diff.sh"
   },
   "engines": {
     "node": ">=20"
