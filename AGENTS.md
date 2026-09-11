@@ -38,7 +38,7 @@
 
 ## Project Structure & Module Organization
 
-This is a minimal Zepp OS 2 watch-face project. `app.js` owns application-level lifecycle hooks and shared state. `watchface/index.js` contains the watch-face lifecycle and is the main place for UI construction and sensor binding. `app.json` defines metadata, API compatibility, permissions, and the supported device target. Keep device-specific resources under `assets/<resolution>-<device>/`, matching the target key in `app.json`. The `dist/` directory contains generated `.zab` packages; do not edit its contents manually.
+This is a minimal Zepp OS 2 watch-face project. `app.js` owns application-level lifecycle hooks and shared state. `watchface/index.js` contains the watch-face lifecycle and is the main place for UI construction and sensor binding. `app.json` defines metadata, API compatibility, permissions, and the supported device target. Keep device-specific resources under `assets/<resolution>-<device>/`, matching the target key in `app.json`. The ignored `dist/` directory contains temporary generated packages. Immutable preview packages live under `releases/v<version>/` with their manifest and checksum and are tracked by Git.
 
 ## Build, Test, and Development Commands
 
@@ -46,7 +46,8 @@ The project has a small `package.json`, while Zeus itself is provided by the glo
 
 - `npm run check` performs syntax/config/asset validation and one target-specific Zeus build.
 - `npm run dev` runs target-specific `zeus dev` and writes its log outside the repository so the watcher cannot rebuild on its own output.
-- `npm run preview` displays a target-specific QR code for installation through Zepp App Developer Mode.
+- `npm run preview` (also `npm run preview:release`) requires a clean source tree, builds and uploads a target-specific preview, displays its QR code, and archives the exact uploaded `.zab` under `releases/v<app.version.name>/`. A version cannot be archived twice.
+- `npm run preview:zab -- releases/v<version>/<package>.zab` verifies and uploads an archived package without rebuilding it, then displays a fresh QR code. The private uploader is pinned to Zeus CLI 1.9.3 and must be reviewed when Zeus changes.
 - `npm run visual:diff -- <penpot.png> <simulator.png> [output.png]` produces a three-panel reference/actual/difference image.
 - In a managed sandbox, Zeus may fail with `spawnSync /bin/sh EPERM`; rerun the same command with approval instead of changing the CLI or project.
 
@@ -56,7 +57,7 @@ Use two-space indentation in JavaScript and JSON, single quotes in JavaScript, a
 
 ## Testing Guidelines
 
-There is no automated test suite or coverage threshold. Before submitting a change, run `npm run check`, then exercise it once with `npm run dev` on the single Balance 2 target. Capture Normal and AOD once, combine each Penpot/Simulator pair with `npm run visual:diff`, and inspect the composites for placement, clipping, typography, and readability. Allow at most two correction loops. For hardware-dependent behavior, also run `npm run preview` on a compatible watch. Document which screens and hardware were tested.
+There is no automated test suite or coverage threshold. Before submitting a change, run `npm run check`, then exercise it once with `npm run dev` on the single Balance 2 target. Capture Normal and AOD once, combine each Penpot/Simulator pair with `npm run visual:diff`, and inspect the composites for placement, clipping, typography, and readability. Allow at most two correction loops. For hardware-dependent behavior, commit the source state, run `npm run preview` on a compatible watch, and commit the generated release directory after verification. Document which screens and hardware were tested.
 
 ## Commit & Pull Request Guidelines
 
@@ -66,3 +67,4 @@ Git history is not available in this checkout, so no repository-specific commit 
 
 Keep permissions in `app.json` minimal. Never commit account tokens, QR-login data, or device identifiers. Update version code and name deliberately for release builds.
 Never commit Penpot MCP keys or authenticated remote-MCP URLs. Local MCP mode does not require a key; use remote credentials only when the user explicitly requests remote mode.
+Do not save preview QR URLs or Zeus credentials in release manifests. Preserved `.zab` files are release artifacts; never overwrite an existing version directory.

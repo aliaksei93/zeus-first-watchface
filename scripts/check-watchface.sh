@@ -6,7 +6,7 @@ PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 TARGET=${ZEPP_TARGET:-480x480-amazfit-balance-2}
 ASSET_DIR="$PROJECT_DIR/assets/$TARGET"
 
-for executable in node jq zeus; do
+for executable in node jq sha256sum stat zeus; do
   if ! command -v "$executable" >/dev/null 2>&1; then
     echo "Required command is not available: $executable" >&2
     exit 1
@@ -28,6 +28,70 @@ jq -e '
 bash -n scripts/generate-watchface-assets.sh
 bash -n scripts/dev-watchface.sh
 bash -n scripts/create-visual-diff.sh
+node --check scripts/zeus-preview-utils.mjs
+node --check scripts/preview-release.mjs
+node --check scripts/preview-zab.mjs
+
+for manifest in "$PROJECT_DIR"/releases/v*/release.json; do
+  if [ ! -e "$manifest" ]; then
+    continue
+  fi
+
+  release_dir=$(dirname -- "$manifest")
+  release_name=$(basename -- "$release_dir")
+  artifact_name=$(jq -er '
+    select(
+      .schemaVersion == 1 and
+      .build.mode == "preview" and
+      .target == "480x480-amazfit-balance-2" and
+      (.artifact.sha256 | type == "string" and test("^[0-9a-f]{64}$")) and
+      (.artifact.sizeBytes | type == "number" and . > 0) and
+      (.app.version.name | type == "string" and length > 0) and
+      (.app.version.code | type == "number" and . > 0)
+    ) |
+    .artifact.file
+  ' "$manifest")
+  manifest_version=$(jq -er '.app.version.name' "$manifest")
+
+  if [ "$release_name" != "v$manifest_version" ]; then
+    echo "Release directory and manifest version differ: $release_dir" >&2
+    exit 1
+  fi
+
+  case "$artifact_name" in
+    */*)
+      echo "Release artifact must be in its manifest directory: $artifact_name" >&2
+      exit 1
+      ;;
+  esac
+
+  if [ ! -f "$release_dir/$artifact_name" ]; then
+    echo "Missing release artifact: $release_dir/$artifact_name" >&2
+    exit 1
+  fi
+
+  if [ ! -f "$release_dir/SHA256SUMS" ]; then
+    echo "Missing release checksum file: $release_dir/SHA256SUMS" >&2
+    exit 1
+  fi
+
+  expected_sha256=$(jq -er '.artifact.sha256' "$manifest")
+  actual_sha256=$(sha256sum "$release_dir/$artifact_name" | awk '{print $1}')
+  expected_size=$(jq -er '.artifact.sizeBytes' "$manifest")
+  actual_size=$(stat -c '%s' "$release_dir/$artifact_name")
+
+  if [ "$actual_sha256" != "$expected_sha256" ]; then
+    echo "Release checksum mismatch: $release_dir/$artifact_name" >&2
+    exit 1
+  fi
+
+  if [ "$actual_size" != "$expected_size" ]; then
+    echo "Release size mismatch: $release_dir/$artifact_name" >&2
+    exit 1
+  fi
+
+  (cd "$release_dir" && sha256sum -c SHA256SUMS)
+done
 
 for group in normal/primary normal/seconds alarm date aod; do
   for digit in 0 1 2 3 4 5 6 7 8 9; do

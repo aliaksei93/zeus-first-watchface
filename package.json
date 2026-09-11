@@ -6,7 +6,9 @@
     "build": "zeus build -t 480x480-amazfit-balance-2",
     "check": "bash scripts/check-watchface.sh",
     "dev": "bash scripts/dev-watchface.sh",
-    "preview": "zeus preview -t 480x480-amazfit-balance-2",
+    "preview": "node scripts/preview-release.mjs",
+    "preview:release": "node scripts/preview-release.mjs",
+    "preview:zab": "node scripts/preview-zab.mjs",
     "status": "zeus status",
     "visual:diff": "bash scripts/create-visual-diff.sh"
   },
