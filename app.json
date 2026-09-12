@@ -5,8 +5,8 @@
     "appName": "Retro Digital",
     "appType": "watchface",
     "version": {
-      "code": 3,
-      "name": "1.1.0"
+      "code": 4,
+      "name": "1.1.1"
     },
     "icon": "icon.png",
     "vender": "zepp",
