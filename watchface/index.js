@@ -14,7 +14,7 @@ const UI_ASSET_ROOT = 'ui/'
 const ALARM_ASSET_ROOT = 'alarm/'
 const DATE_ASSET_ROOT = 'date/'
 const WEATHER_ASSET_ROOT = 'weather/'
-const DSEG7_FONT = 'fonts/DSEG7Classic-Regular.ttf'
+const DSEG7_FONT = 'fonts/DSEG7Classic-Bold.ttf'
 
 function createDigitArray(root) {
   return Array.from({ length: 10 }, function (_, index) {

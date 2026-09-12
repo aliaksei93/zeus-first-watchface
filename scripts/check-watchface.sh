@@ -105,7 +105,7 @@ done
 
 for asset in \
   fonts/DSEG-LICENSE.txt \
-  fonts/DSEG7Classic-Regular.ttf \
+  fonts/DSEG7Classic-Bold.ttf \
   ui/brand.png \
   ui/meta.png \
   alarm/status.png \
