@@ -93,7 +93,7 @@ for manifest in "$PROJECT_DIR"/releases/v*/release.json; do
   (cd "$release_dir" && sha256sum -c SHA256SUMS)
 done
 
-for group in normal/primary normal/seconds alarm date aod; do
+for group in alarm date weather; do
   for digit in 0 1 2 3 4 5 6 7 8 9; do
     asset="$ASSET_DIR/$group/$digit.png"
     if [ ! -f "$asset" ]; then
@@ -104,7 +104,11 @@ for group in normal/primary normal/seconds alarm date aod; do
 done
 
 for asset in \
-  normal/primary/colon.png \
+  fonts/DSEG-LICENSE.txt \
+  fonts/DSEG7Classic-Regular.ttf \
+  ui/brand.png \
+  ui/meta.png \
+  alarm/status.png \
   alarm/colon.png \
   date/dot.png \
   weather/thunder.png; do

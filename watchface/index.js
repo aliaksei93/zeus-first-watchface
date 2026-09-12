@@ -5,15 +5,16 @@ import * as hmUI from '@zos/ui'
 const COLORS = {
   background: 0x000000,
   border: 0x65735c,
+  ghost: 0x0f0f0f,
+  primary: 0xe6f4c7,
+  secondary: 0x9eae91,
 }
 
 const UI_ASSET_ROOT = 'ui/'
-const PRIMARY_TIME_ASSET_ROOT = 'normal/primary/'
-const SECOND_TIME_ASSET_ROOT = 'normal/seconds/'
 const ALARM_ASSET_ROOT = 'alarm/'
 const DATE_ASSET_ROOT = 'date/'
 const WEATHER_ASSET_ROOT = 'weather/'
-const AOD_ASSET_ROOT = 'aod/'
+const DSEG7_FONT = 'fonts/DSEG7Classic-Regular.ttf'
 
 function createDigitArray(root) {
   return Array.from({ length: 10 }, function (_, index) {
@@ -21,12 +22,9 @@ function createDigitArray(root) {
   })
 }
 
-const PRIMARY_TIME_DIGITS = createDigitArray(PRIMARY_TIME_ASSET_ROOT)
-const SECOND_TIME_DIGITS = createDigitArray(SECOND_TIME_ASSET_ROOT)
 const ALARM_DIGITS = createDigitArray(ALARM_ASSET_ROOT)
 const DATE_DIGITS = createDigitArray(DATE_ASSET_ROOT)
 const WEATHER_DIGITS = createDigitArray(WEATHER_ASSET_ROOT)
-const AOD_DIGITS = createDigitArray(AOD_ASSET_ROOT)
 
 const WEEKDAY_IMAGES = [
   DATE_ASSET_ROOT + 'weekday-mon.png',
@@ -37,19 +35,19 @@ const WEEKDAY_IMAGES = [
   DATE_ASSET_ROOT + 'weekday-sat.png',
   DATE_ASSET_ROOT + 'weekday-sun.png',
 ]
-const WEEKDAY_PREFIX_WIDTHS = [70, 58, 67, 62, 47, 55, 62]
-const DATE_DIGITS_WIDTH = 142
+const WEEKDAY_PREFIX_WIDTHS = [77, 65, 74, 69, 51, 62, 69]
+const DATE_DIGITS_WIDTH = 152
 
 let screenWidth = 480
 let screenHeight = 480
 let screenScale = 1
 let timeSensor = null
 let refreshTimer = null
-let normalHourDigits = null
-let normalMinuteDigits = null
-let normalSecondImages = []
+let normalTimeText = null
+let normalSecondText = null
 let normalWeekdayImage = null
 let normalDateImages = []
+let aodTimeText = null
 
 function scaled(value) {
   return Math.round(value * screenScale)
@@ -78,6 +76,29 @@ function createImage(x, y, src, level, w, h) {
   return hmUI.createWidget(hmUI.widget.IMG, options)
 }
 
+function createText(x, y, w, h, text, size, color, level, font) {
+  const options = {
+    x: scaled(x),
+    y: scaled(y),
+    w: scaled(w),
+    h: scaled(h),
+    text: text,
+    text_size: scaled(size),
+    color: color,
+    align_h: hmUI.align.CENTER_H,
+    align_v: hmUI.align.CENTER_V,
+    text_style: hmUI.text_style.NONE,
+    char_space: 0,
+    show_level: level,
+  }
+
+  if (font) {
+    options.font = font
+  }
+
+  return hmUI.createWidget(hmUI.widget.TEXT, options)
+}
+
 function createDivider(y, level) {
   hmUI.createWidget(hmUI.widget.FILL_RECT, {
     x: scaled(70),
@@ -100,27 +121,24 @@ function createFrame(level) {
   })
 
   createImage(80, 70, UI_ASSET_ROOT + 'brand.png', level, 320, 28)
-  createDivider(156, level)
-  createDivider(348, level)
-  createImage(60, 354, UI_ASSET_ROOT + 'action-alarm.png', level, 120, 40)
-  createImage(180, 354, UI_ASSET_ROOT + 'action-timer.png', level, 120, 40)
-  createImage(300, 354, UI_ASSET_ROOT + 'action-stopwatch.png', level, 120, 40)
+  createDivider(174, level)
+  createDivider(304, level)
   createImage(110, 406, UI_ASSET_ROOT + 'meta.png', level, 260, 24)
 }
 
 function createAlarm(level) {
   hmUI.createWidget(hmUI.widget.IMG_STATUS, {
-    x: scaled(80),
-    y: scaled(117),
+    x: scaled(68),
+    y: scaled(134),
     src: ALARM_ASSET_ROOT + 'status.png',
     type: hmUI.system_status.CLOCK,
     show_level: level,
   })
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(110),
-    y: scaled(120),
-    w: scaled(53),
+    x: scaled(105),
+    y: scaled(138),
+    w: scaled(59),
     h: scaled(22),
     font_array: ALARM_DIGITS,
     dot_image: ALARM_ASSET_ROOT + 'colon.png',
@@ -134,14 +152,14 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
-  createImage(320, 117, WEATHER_ASSET_ROOT + 'thunder.png', level, 24, 24)
-  createImage(350, 118, WEATHER_ASSET_ROOT + 'plus.png', level, 12, 21)
+  createImage(310, 134, WEATHER_ASSET_ROOT + 'thunder.png', level, 30, 30)
+  createImage(349, 138, WEATHER_ASSET_ROOT + 'plus.png', level, 14, 22)
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(350),
-    y: scaled(118),
-    w: scaled(50),
-    h: scaled(21),
+    x: scaled(363),
+    y: scaled(138),
+    w: scaled(47),
+    h: scaled(22),
     font_array: WEATHER_DIGITS,
     unit_sc: WEATHER_ASSET_ROOT + 'unit-c.png',
     unit_en: WEATHER_ASSET_ROOT + 'unit-c.png',
@@ -151,7 +169,7 @@ function createWeather(level) {
     imperial_unit_tc: WEATHER_ASSET_ROOT + 'unit-f.png',
     negative_image: WEATHER_ASSET_ROOT + 'minus.png',
     invalid_image: WEATHER_ASSET_ROOT + 'empty.png',
-    h_space: scaled(1),
+    h_space: 0,
     align_h: hmUI.align.RIGHT,
     type: hmUI.data_type.WEATHER_CURRENT,
     show_level: level,
@@ -159,40 +177,15 @@ function createWeather(level) {
 }
 
 function createTime(level) {
-  normalHourDigits = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(116),
-    y: scaled(191),
-    w: scaled(111),
-    h: scaled(98),
-    font_array: PRIMARY_TIME_DIGITS,
-    h_space: scaled(-1),
-    align_h: hmUI.align.LEFT,
-    text: '',
-    show_level: level,
-  })
-
-  createImage(227, 191, PRIMARY_TIME_ASSET_ROOT + 'colon.png', level, 24, 98)
-
-  normalMinuteDigits = hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(251),
-    y: scaled(191),
-    w: scaled(111),
-    h: scaled(98),
-    font_array: PRIMARY_TIME_DIGITS,
-    h_space: scaled(-1),
-    align_h: hmUI.align.LEFT,
-    text: '',
-    show_level: level,
-  })
-
-  normalSecondImages = [
-    createImage(374, 235, SECOND_TIME_DIGITS[0], level, 23, 42),
-    createImage(396, 235, SECOND_TIME_DIGITS[0], level, 23, 42),
-  ]
+  createText(101, 200, 278, 80, '88:88', 80, COLORS.ghost, level, DSEG7_FONT)
+  normalTimeText =
+    createText(101, 200, 278, 80, '', 80, COLORS.primary, level, DSEG7_FONT)
+  normalSecondText =
+    createText(379, 256, 40, 24, '', 24, COLORS.secondary, level, DSEG7_FONT)
 }
 
 function createDate(level) {
-  normalWeekdayImage = createImage(134, 303, WEEKDAY_IMAGES[0], level)
+  normalWeekdayImage = createImage(127, 316, WEEKDAY_IMAGES[0], level)
 
   normalDateImages = []
   let x = 204
@@ -200,10 +193,10 @@ function createDate(level) {
 
   for (let index = 0; index < placeholder.length; index += 1) {
     const isDot = placeholder[index] === '.'
-    const width = isDot ? 7 : 16
+    const width = isDot ? 8 : 17
     const src = isDot ? DATE_ASSET_ROOT + 'dot.png' : DATE_DIGITS[0]
 
-    normalDateImages.push(createImage(x, 303, src, level, width, 30))
+    normalDateImages.push(createImage(x, 316, src, level, width, 28))
     x += width
   }
 }
@@ -213,26 +206,22 @@ function updateTime() {
   const weekdayWidth = WEEKDAY_PREFIX_WIDTHS[weekdayIndex]
   const dateStartX = Math.floor((480 - weekdayWidth - DATE_DIGITS_WIDTH) / 2)
 
-  normalHourDigits.setProperty(hmUI.prop.TEXT, padded(timeSensor.getHours()))
-  normalMinuteDigits.setProperty(hmUI.prop.TEXT, padded(timeSensor.getMinutes()))
+  const timeText = padded(timeSensor.getHours()) + ':' + padded(timeSensor.getMinutes())
   const secondText = padded(timeSensor.getSeconds())
 
-  for (let index = 0; index < secondText.length; index += 1) {
-    normalSecondImages[index].setProperty(hmUI.prop.MORE, {
-      x: scaled(374 + index * 22),
-      y: scaled(235),
-      w: scaled(23),
-      h: scaled(42),
-      src: SECOND_TIME_DIGITS[Number(secondText[index])],
-      show_level: hmUI.show_level.ONLY_NORMAL,
-    })
+  normalTimeText.setProperty(hmUI.prop.TEXT, timeText)
+  normalSecondText.setProperty(hmUI.prop.TEXT, secondText)
+
+  if (aodTimeText !== null) {
+    aodTimeText.setProperty(hmUI.prop.TEXT, timeText)
   }
+
   normalWeekdayImage.setProperty(hmUI.prop.MORE, {
     x: scaled(dateStartX),
-    y: scaled(303),
+    y: scaled(316),
     src: WEEKDAY_IMAGES[weekdayIndex],
     w: scaled(weekdayWidth),
-    h: scaled(30),
+    h: scaled(28),
     show_level: hmUI.show_level.ONLY_NORMAL,
   })
 
@@ -243,14 +232,14 @@ function updateTime() {
 
   for (let index = 0; index < dateText.length; index += 1) {
     const isDot = dateText[index] === '.'
-    const width = isDot ? 7 : 16
+    const width = isDot ? 8 : 17
     const src = isDot ? DATE_ASSET_ROOT + 'dot.png' : DATE_DIGITS[Number(dateText[index])]
 
     normalDateImages[index].setProperty(hmUI.prop.MORE, {
       x: scaled(dateX),
-      y: scaled(303),
+      y: scaled(316),
       w: scaled(width),
-      h: scaled(30),
+      h: scaled(28),
       src: src,
       show_level: hmUI.show_level.ONLY_NORMAL,
     })
@@ -280,9 +269,9 @@ WatchFace({
     createTime(level)
     createDate(level)
 
-    createTapZone(52, 164, 116, 104, hmUI.data_type.ALARM_CLOCK, level)
-    createTapZone(196, 164, 116, 104, hmUI.data_type.COUNT_DOWN, level)
-    createTapZone(336, 184, 88, 78, hmUI.data_type.STOP_WATCH, level)
+    createTapZone(101, 200, 111, 80, hmUI.data_type.ALARM_CLOCK, level)
+    createTapZone(268, 200, 111, 80, hmUI.data_type.COUNT_DOWN, level)
+    createTapZone(379, 256, 40, 24, hmUI.data_type.STOP_WATCH, level)
 
     hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
       resume_call: updateTime,
@@ -301,23 +290,9 @@ WatchFace({
       show_level: level,
     })
 
-    hmUI.createWidget(hmUI.widget.IMG_TIME, {
-      hour_zero: 1,
-      hour_startX: scaled(116),
-      hour_startY: scaled(191),
-      hour_array: AOD_DIGITS,
-      hour_space: scaled(-1),
-      hour_unit_sc: AOD_ASSET_ROOT + 'colon.png',
-      hour_unit_tc: AOD_ASSET_ROOT + 'colon.png',
-      hour_unit_en: AOD_ASSET_ROOT + 'colon.png',
-      hour_align: hmUI.align.LEFT,
-      minute_follow: 1,
-      minute_zero: 1,
-      minute_array: AOD_DIGITS,
-      minute_space: scaled(-1),
-      second_follow: 0,
-      show_level: level,
-    })
+    createText(101, 200, 278, 80, '88:88', 80, COLORS.ghost, level, DSEG7_FONT)
+    aodTimeText =
+      createText(101, 200, 278, 80, '', 80, COLORS.primary, level, DSEG7_FONT)
   },
 
   onInit() {
