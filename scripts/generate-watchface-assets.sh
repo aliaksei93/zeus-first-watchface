@@ -24,6 +24,19 @@ render_glyph() {
     -extent "${width}x${height}" "$output"
 }
 
+render_padded_glyph() {
+  text=$1
+  point_size=$2
+  width=$3
+  height=$4
+  color=$5
+  output=$6
+
+  magick -background none -fill "$color" -font "$INTER_FONT" \
+    -pointsize "$point_size" "label:$text" -trim +repage -gravity center \
+    -extent "${width}x${height}" "$output"
+}
+
 for target in \
   '480x480-amazfit-balance-2'; do
   asset_dir="$PROJECT_DIR/assets/$target"
@@ -40,4 +53,6 @@ for target in \
   render_glyph ':' 22 7 22 "$PRIMARY_COLOR" "$alarm_dir/colon.png"
   render_glyph '+' 22 14 22 "$PRIMARY_COLOR" "$weather_dir/plus.png"
   render_glyph '-' 22 14 22 "$PRIMARY_COLOR" "$weather_dir/minus.png"
+  render_padded_glyph '℃' 22 28 22 "$PRIMARY_COLOR" "$weather_dir/unit-c.png"
+  render_padded_glyph '℉' 22 28 22 "$PRIMARY_COLOR" "$weather_dir/unit-f.png"
 done

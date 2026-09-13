@@ -1,5 +1,5 @@
 import { getDeviceInfo } from '@zos/device'
-import { Time, Weather } from '@zos/sensor'
+import { Time } from '@zos/sensor'
 import * as hmUI from '@zos/ui'
 
 const COLORS = {
@@ -28,29 +28,48 @@ const ALARM_DIGITS = createDigitArray(ALARM_ASSET_ROOT)
 const WEATHER_DIGITS = createDigitArray(WEATHER_ASSET_ROOT)
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
-const WEATHER_ICON_GROUPS = [
-  { icon: 'sunny.png', codes: [3] },
-  { icon: 'cloudy.png', codes: [0, 4, 26] },
-  { icon: 'rain.png', codes: [1, 5, 7, 27] },
-  { icon: 'heavy-rain.png', codes: [10, 18, 19, 21, 24] },
-  { icon: 'snow.png', codes: [2, 6, 8, 9, 12, 16] },
-  { icon: 'thunder.png', codes: [15, 20] },
-  { icon: 'atmosphere.png', codes: [11, 13, 14, 17, 22, 23] },
-  { icon: 'night.png', codes: [28] },
-  { icon: 'unknown.png', codes: [25] },
-]
+const WEATHER_ICONS = [
+  'cloudy.png',
+  'rain.png',
+  'snow.png',
+  'sunny.png',
+  'cloudy.png',
+  'rain.png',
+  'snow.png',
+  'rain.png',
+  'snow.png',
+  'snow.png',
+  'heavy-rain.png',
+  'atmosphere.png',
+  'snow.png',
+  'atmosphere.png',
+  'atmosphere.png',
+  'thunder.png',
+  'snow.png',
+  'atmosphere.png',
+  'heavy-rain.png',
+  'heavy-rain.png',
+  'thunder.png',
+  'heavy-rain.png',
+  'atmosphere.png',
+  'atmosphere.png',
+  'heavy-rain.png',
+  'unknown.png',
+  'cloudy.png',
+  'rain.png',
+  'night.png',
+].map(function (icon) {
+  return WEATHER_ASSET_ROOT + icon
+})
 
 let screenWidth = 480
 let screenHeight = 480
 let screenScale = 1
 let timeSensor = null
-let weatherSensor = null
 let refreshTimer = null
-let weatherRefreshTimer = null
 let normalTimeText = null
 let normalSecondText = null
 let normalDateText = null
-let normalWeatherIcon = null
 let aodTimeText = null
 
 function scaled(value) {
@@ -176,22 +195,30 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
-  normalWeatherIcon = createImage(
-    337,
-    141,
-    WEATHER_ASSET_ROOT + 'unknown.png',
-    level,
-    28,
-    28,
-  )
-  createImage(377, 142, WEATHER_ASSET_ROOT + 'plus.png', level, 14, 22)
+  hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
+    x: scaled(335),
+    y: scaled(139),
+    w: scaled(32),
+    h: scaled(32),
+    image_array: WEATHER_ICONS,
+    image_length: WEATHER_ICONS.length,
+    type: hmUI.data_type.WEATHER_CURRENT,
+    show_level: level,
+  })
+  createImage(377, 144, WEATHER_ASSET_ROOT + 'plus.png', level, 14, 22)
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
     x: scaled(391),
-    y: scaled(142),
-    w: scaled(26),
+    y: scaled(144),
+    w: scaled(54),
     h: scaled(22),
     font_array: WEATHER_DIGITS,
+    unit_sc: WEATHER_ASSET_ROOT + 'unit-c.png',
+    unit_en: WEATHER_ASSET_ROOT + 'unit-c.png',
+    unit_tc: WEATHER_ASSET_ROOT + 'unit-c.png',
+    imperial_unit_sc: WEATHER_ASSET_ROOT + 'unit-f.png',
+    imperial_unit_en: WEATHER_ASSET_ROOT + 'unit-f.png',
+    imperial_unit_tc: WEATHER_ASSET_ROOT + 'unit-f.png',
     negative_image: WEATHER_ASSET_ROOT + 'minus.png',
     invalid_image: WEATHER_ASSET_ROOT + 'empty.png',
     h_space: 0,
@@ -199,48 +226,6 @@ function createWeather(level) {
     type: hmUI.data_type.WEATHER_CURRENT,
     show_level: level,
   })
-  createText(
-    417,
-    140,
-    21,
-    27,
-    '℃',
-    22,
-    COLORS.primary,
-    level,
-    INTER_REGULAR_FONT,
-  )
-}
-
-function updateWeatherIcon() {
-  if (weatherSensor === null || normalWeatherIcon === null) {
-    return
-  }
-
-  try {
-    const weather = weatherSensor.getForecastWeather()
-    const current = weather.forecastData.data[0]
-    let icon = 'unknown.png'
-
-    for (let index = 0; index < WEATHER_ICON_GROUPS.length; index += 1) {
-      const group = WEATHER_ICON_GROUPS[index]
-
-      if (group.codes.indexOf(current.index) !== -1) {
-        icon = group.icon
-        break
-      }
-    }
-
-    normalWeatherIcon.setProperty(
-      hmUI.prop.SRC,
-      WEATHER_ASSET_ROOT + icon,
-    )
-  } catch (error) {
-    normalWeatherIcon.setProperty(
-      hmUI.prop.SRC,
-      WEATHER_ASSET_ROOT + 'unknown.png',
-    )
-  }
 }
 
 function createTime(level) {
@@ -321,7 +306,6 @@ function updateTime() {
 
 function updateDynamicData() {
   updateTime()
-  updateWeatherIcon()
 }
 
 function createTapZone(x, y, w, h, type, level) {
@@ -346,7 +330,7 @@ WatchFace({
     createTime(level)
     createDate(level)
 
-    createTapZone(337, 140, 100, 30, hmUI.data_type.WEATHER_CURRENT, level)
+    createTapZone(310, 116, 135, 64, hmUI.data_type.WEATHER_CURRENT, level)
     createTapZone(95, 198, 111, 84, hmUI.data_type.ALARM_CLOCK, level)
     createTapZone(275, 198, 111, 84, hmUI.data_type.COUNT_DOWN, level)
     createTapZone(387, 258, 40, 24, hmUI.data_type.STOP_WATCH, level)
@@ -393,13 +377,12 @@ WatchFace({
   },
 
   onInit() {
-    const deviceInfo = getDeviceInfo();
+    const deviceInfo = getDeviceInfo()
 
     screenWidth = deviceInfo.width
     screenHeight = deviceInfo.height
     screenScale = screenWidth / 480
     timeSensor = new Time()
-    weatherSensor = new Weather()
   },
 
   build() {
@@ -407,18 +390,12 @@ WatchFace({
     this.drawAod()
     updateDynamicData()
     refreshTimer = setInterval(updateTime, 1000)
-    weatherRefreshTimer = setInterval(updateWeatherIcon, 15 * 60 * 1000)
   },
 
   onDestroy() {
     if (refreshTimer !== null) {
       clearInterval(refreshTimer)
       refreshTimer = null
-    }
-
-    if (weatherRefreshTimer !== null) {
-      clearInterval(weatherRefreshTimer)
-      weatherRefreshTimer = null
     }
   },
 })
