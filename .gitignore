@@ -7,7 +7,6 @@ yarn-error.log*
 yarn.lock
 package-lock.json
 selenium-debug.log
-sim-debug.log
 .idea
 .vscode
 *.suo
