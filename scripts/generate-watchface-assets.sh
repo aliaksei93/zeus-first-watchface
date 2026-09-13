@@ -47,7 +47,7 @@ for target in \
   mkdir -p "$alarm_dir" "$weather_dir"
 
   for digit in 0 1 2 3 4 5 6 7 8 9; do
-    render_glyph "$digit" 22 13 22 "$PRIMARY_COLOR" "$alarm_dir/$digit.png"
+    render_padded_glyph "$digit" 22 14 22 "$PRIMARY_COLOR" "$alarm_dir/$digit.png"
     render_glyph "$digit" 22 13 22 "$PRIMARY_COLOR" "$weather_dir/$digit.png"
   done
 

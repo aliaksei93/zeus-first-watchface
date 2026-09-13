@@ -218,7 +218,7 @@ function createAlarm(level) {
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
     x: scaled(ALARM_ROW.x + 37),
     y: scaled(ALARM_ROW.y + 4),
-    w: scaled(61),
+    w: scaled(65),
     h: scaled(22),
     font_array: ALARM_DIGITS,
     dot_image: ALARM_ASSET_ROOT + 'colon.png',

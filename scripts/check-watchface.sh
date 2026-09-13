@@ -100,6 +100,17 @@ for group in alarm weather; do
       echo "Missing generated asset: $asset" >&2
       exit 1
     fi
+
+    expected_size='13x22'
+    if [ "$group" = 'alarm' ]; then
+      expected_size='14x22'
+    fi
+
+    actual_size=$(identify -format '%wx%h' "$asset")
+    if [ "$actual_size" != "$expected_size" ]; then
+      echo "Generated digit must be $expected_size: $asset ($actual_size)" >&2
+      exit 1
+    fi
   done
 done
 
