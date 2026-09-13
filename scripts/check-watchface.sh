@@ -109,6 +109,8 @@ for asset in \
   fonts/INTER-LICENSE.txt \
   fonts/Inter-Bold.ttf \
   fonts/Inter-Regular.ttf \
+  alarm/status-active-row.png \
+  alarm/status-empty.png \
   alarm/status.png \
   alarm/colon.png \
   weather/atmosphere.png \
@@ -129,9 +131,21 @@ for asset in \
 done
 
 alarm_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status.png")
+alarm_empty_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status-empty.png")
+alarm_active_row_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status-active-row.png")
 
 if [ "$alarm_icon_size" != '28x28' ]; then
   echo "Alarm icon must be 28x28: $ASSET_DIR/alarm/status.png ($alarm_icon_size)" >&2
+  exit 1
+fi
+
+if [ "$alarm_empty_icon_size" != '28x28' ]; then
+  echo "Empty alarm icon must be 28x28: $ASSET_DIR/alarm/status-empty.png ($alarm_empty_icon_size)" >&2
+  exit 1
+fi
+
+if [ "$alarm_active_row_size" != '163x30' ]; then
+  echo "Active alarm row must be 163x30: $ASSET_DIR/alarm/status-active-row.png ($alarm_active_row_size)" >&2
   exit 1
 fi
 

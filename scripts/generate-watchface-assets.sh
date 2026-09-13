@@ -5,6 +5,7 @@ set -eu
 PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 INTER_FONT=${INTER_FONT:-$PROJECT_DIR/assets/480x480-amazfit-balance-2/fonts/Inter-Regular.ttf}
 PRIMARY_COLOR='#e6f4c7'
+BACKGROUND_COLOR='#000000'
 
 if [ -z "$INTER_FONT" ] || [ ! -f "$INTER_FONT" ]; then
   echo "Inter Regular font is not available: $INTER_FONT" >&2
@@ -51,6 +52,12 @@ for target in \
   done
 
   render_glyph ':' 22 7 22 "$PRIMARY_COLOR" "$alarm_dir/colon.png"
+  magick "$alarm_dir/status.png" -channel RGB -fill "$PRIMARY_COLOR" \
+    -colorize 100% -type TrueColorAlpha -define png:color-type=6 \
+    "PNG32:$alarm_dir/status-empty.png"
+  magick -size 163x30 "xc:$BACKGROUND_COLOR" "$alarm_dir/status.png" \
+    -geometry +0+1 -composite -type TrueColorAlpha -define png:color-type=6 \
+    "PNG32:$alarm_dir/status-active-row.png"
   render_glyph '+' 22 14 22 "$PRIMARY_COLOR" "$weather_dir/plus.png"
   render_glyph '-' 22 14 22 "$PRIMARY_COLOR" "$weather_dir/minus.png"
   render_padded_glyph '℃' 22 28 22 "$PRIMARY_COLOR" "$weather_dir/unit-c.png"

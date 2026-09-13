@@ -18,6 +18,21 @@ const DSEG7_FONT = 'fonts/DSEG7Classic-Bold.ttf'
 const INTER_REGULAR_FONT = 'fonts/Inter-Regular.ttf'
 const INTER_BOLD_FONT = 'fonts/Inter-Bold.ttf'
 
+const ALARM_ROW = {
+  x: 58,
+  y: 140,
+  w: 163,
+  h: 30,
+}
+
+const WEATHER_ROW = {
+  right: 435,
+  iconW: 32,
+  signW: 14,
+  valueW: 54,
+  gap: 10,
+}
+
 function createDigitArray(root) {
   return Array.from({ length: 10 }, function (_, index) {
     return root + index + '.png'
@@ -170,17 +185,39 @@ function createFrame(level) {
 }
 
 function createAlarm(level) {
+  createImage(
+    ALARM_ROW.x,
+    ALARM_ROW.y + 1,
+    ALARM_ASSET_ROOT + 'status-empty.png',
+    level,
+    28,
+    28,
+  )
+  createText(
+    ALARM_ROW.x + 39,
+    ALARM_ROW.y + 4,
+    124,
+    22,
+    'NO ALARMS',
+    20,
+    COLORS.primary,
+    level,
+    INTER_BOLD_FONT,
+  )
+
   hmUI.createWidget(hmUI.widget.IMG_STATUS, {
-    x: scaled(58),
-    y: scaled(141),
-    src: ALARM_ASSET_ROOT + 'status.png',
+    x: scaled(ALARM_ROW.x),
+    y: scaled(ALARM_ROW.y),
+    w: scaled(ALARM_ROW.w),
+    h: scaled(ALARM_ROW.h),
+    src: ALARM_ASSET_ROOT + 'status-active-row.png',
     type: hmUI.system_status.CLOCK,
     show_level: level,
   })
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(94),
-    y: scaled(144),
+    x: scaled(ALARM_ROW.x + 37),
+    y: scaled(ALARM_ROW.y + 4),
     w: scaled(59),
     h: scaled(22),
     font_array: ALARM_DIGITS,
@@ -195,22 +232,33 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
+  const valueX = WEATHER_ROW.right - WEATHER_ROW.valueW
+  const signX = valueX - WEATHER_ROW.signW
+  const iconX = signX - WEATHER_ROW.gap - WEATHER_ROW.iconW
+
   hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
-    x: scaled(335),
+    x: scaled(iconX),
     y: scaled(139),
-    w: scaled(32),
+    w: scaled(WEATHER_ROW.iconW),
     h: scaled(32),
     image_array: WEATHER_ICONS,
     image_length: WEATHER_ICONS.length,
     type: hmUI.data_type.WEATHER_CURRENT,
     show_level: level,
   })
-  createImage(377, 144, WEATHER_ASSET_ROOT + 'plus.png', level, 14, 22)
+  createImage(
+    signX,
+    144,
+    WEATHER_ASSET_ROOT + 'plus.png',
+    level,
+    WEATHER_ROW.signW,
+    22,
+  )
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(391),
+    x: scaled(valueX),
     y: scaled(144),
-    w: scaled(54),
+    w: scaled(WEATHER_ROW.valueW),
     h: scaled(22),
     font_array: WEATHER_DIGITS,
     unit_sc: WEATHER_ASSET_ROOT + 'unit-c.png',
@@ -331,6 +379,7 @@ WatchFace({
     createDate(level)
 
     createTapZone(310, 116, 135, 64, hmUI.data_type.WEATHER_CURRENT, level)
+    createTapZone(55, 116, 135, 64, hmUI.data_type.ALARM_CLOCK, level)
     createTapZone(95, 198, 111, 84, hmUI.data_type.ALARM_CLOCK, level)
     createTapZone(275, 198, 111, 84, hmUI.data_type.COUNT_DOWN, level)
     createTapZone(387, 258, 40, 24, hmUI.data_type.STOP_WATCH, level)
