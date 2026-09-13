@@ -16,6 +16,6 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@zeppos/device-types": "2.0.2"
+    "@zeppos/device-types": "4.0.0"
   }
 }

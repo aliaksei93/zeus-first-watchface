@@ -6,7 +6,7 @@ PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 TARGET=${ZEPP_TARGET:-480x480-amazfit-balance-2}
 ASSET_DIR="$PROJECT_DIR/assets/$TARGET"
 
-for executable in node jq sha256sum stat zeus; do
+for executable in node jq sha256sum stat zeus identify; do
   if ! command -v "$executable" >/dev/null 2>&1; then
     echo "Required command is not available: $executable" >&2
     exit 1
@@ -93,7 +93,7 @@ for manifest in "$PROJECT_DIR"/releases/v*/release.json; do
   (cd "$release_dir" && sha256sum -c SHA256SUMS)
 done
 
-for group in alarm date weather; do
+for group in alarm weather; do
   for digit in 0 1 2 3 4 5 6 7 8 9; do
     asset="$ASSET_DIR/$group/$digit.png"
     if [ ! -f "$asset" ]; then
@@ -106,14 +106,33 @@ done
 for asset in \
   fonts/DSEG-LICENSE.txt \
   fonts/DSEG7Classic-Bold.ttf \
-  ui/brand.png \
-  ui/meta.png \
+  fonts/INTER-LICENSE.txt \
+  fonts/Inter-Bold.ttf \
+  fonts/Inter-Regular.ttf \
   alarm/status.png \
   alarm/colon.png \
-  date/dot.png \
-  weather/thunder.png; do
+  weather/atmosphere.png \
+  weather/cloudy.png \
+  weather/heavy-rain.png \
+  weather/night.png \
+  weather/rain.png \
+  weather/snow.png \
+  weather/sunny.png \
+  weather/thunder.png \
+  weather/unknown.png; do
   if [ ! -f "$ASSET_DIR/$asset" ]; then
     echo "Missing required asset: $ASSET_DIR/$asset" >&2
+    exit 1
+  fi
+done
+
+for icon in alarm/status.png weather/atmosphere.png weather/cloudy.png \
+  weather/heavy-rain.png weather/night.png weather/rain.png weather/snow.png \
+  weather/sunny.png weather/thunder.png weather/unknown.png; do
+  icon_size=$(identify -format '%wx%h' "$ASSET_DIR/$icon")
+
+  if [ "$icon_size" != '28x28' ]; then
+    echo "Icon must be 28x28: $ASSET_DIR/$icon ($icon_size)" >&2
     exit 1
   fi
 done
