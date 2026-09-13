@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "artifact": {
+    "file": "22815-Retro_Digital-1.1.2-20260913115935.zab",
+    "sha256": "174cff51894bb271cf64ca1adf0abb3f4d0ed3ccc62faebbf22b660e161ff769",
+    "sizeBytes": 79517
+  },
+  "app": {
+    "id": 22815,
+    "name": "Retro Digital",
+    "type": "watchface",
+    "version": {
+      "name": "1.1.2",
+      "code": 5
+    }
+  },
+  "target": "480x480-amazfit-balance-2",
+  "build": {
+    "mode": "preview",
+    "createdAt": "2026-09-13T08:59:38.334Z",
+    "zeusCliVersion": "1.9.3"
+  },
+  "preview": {
+    "qrExpiresAfterDays": 7
+  },
+  "source": {
+    "gitCommit": "0a38875349e6d6e85be1ef3f54932d7e5400cf5c",
+    "clean": true
+  }
+}
