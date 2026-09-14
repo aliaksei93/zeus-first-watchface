@@ -13,6 +13,7 @@ const COLORS = {
 };
 
 const ALARM_ASSET_ROOT = "alarm/";
+const INTERACTION_ASSET_ROOT = "interaction/";
 const WEATHER_ASSET_ROOT = "weather/";
 const DSEG7_FONT = "fonts/DSEG7Classic-Bold.ttf";
 const INTER_REGULAR_FONT = "fonts/Inter-Regular.ttf";
@@ -21,8 +22,6 @@ const INTER_BOLD_FONT = "fonts/Inter-Bold.ttf";
 const ALARM_ROW = {
   x: 58,
   y: 140,
-  w: 163,
-  h: 30,
 };
 
 const WEATHER_ROW = {
@@ -31,14 +30,6 @@ const WEATHER_ROW = {
   iconW: 32,
   gap: 10,
 };
-
-function createDigitArray(root) {
-  return Array.from({ length: 10 }, function (_, index) {
-    return root + index + ".png";
-  });
-}
-
-const ALARM_DIGITS = createDigitArray(ALARM_ASSET_ROOT);
 
 const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const WEATHER_ICONS = [
@@ -191,39 +182,30 @@ function createAlarm(level) {
     28,
     28,
   );
-  createText(
-    ALARM_ROW.x + 39,
-    ALARM_ROW.y + 4,
-    124,
-    22,
-    "NO ALARMS",
-    20,
-    COLORS.primary,
-    level,
-    INTER_BOLD_FONT,
-  );
-
   hmUI.createWidget(hmUI.widget.IMG_STATUS, {
     x: scaled(ALARM_ROW.x),
-    y: scaled(ALARM_ROW.y),
-    w: scaled(ALARM_ROW.w),
-    h: scaled(ALARM_ROW.h),
-    src: ALARM_ASSET_ROOT + "status-active-row.png",
+    y: scaled(ALARM_ROW.y + 1),
+    w: scaled(28),
+    h: scaled(28),
+    src: ALARM_ASSET_ROOT + "status.png",
     type: hmUI.system_status.CLOCK,
     show_level: level,
   });
 
-  hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: scaled(ALARM_ROW.x + 37),
+  hmUI.createWidget(hmUI.widget.TEXT_FONT, {
+    x: scaled(ALARM_ROW.x + 39),
     y: scaled(ALARM_ROW.y + 4),
-    w: scaled(65),
+    w: scaled(124),
     h: scaled(22),
-    font_array: ALARM_DIGITS,
-    dot_image: ALARM_ASSET_ROOT + "colon.png",
-    invalid_image: ALARM_ASSET_ROOT + "empty.png",
-    h_space: 0,
+    text_size: scaled(22),
+    font: INTER_REGULAR_FONT,
+    color: COLORS.primary,
+    char_space: 0,
+    line_space: 0,
     padding: true,
     align_h: hmUI.align.LEFT,
+    align_v: hmUI.align.CENTER_V,
+    text_style: hmUI.text_style.NONE,
     type: hmUI.data_type.ALARM_CLOCK,
     show_level: level,
   });
@@ -347,7 +329,7 @@ function createTapZone(x, y, w, h, type, level) {
     y: scaled(y),
     w: scaled(w),
     h: scaled(h),
-    src: ALARM_ASSET_ROOT + "tap.png",
+    src: INTERACTION_ASSET_ROOT + "tap.png",
     type: type,
     show_level: level,
   });

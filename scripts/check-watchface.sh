@@ -93,30 +93,15 @@ for manifest in "$PROJECT_DIR"/releases/v*/release.json; do
   (cd "$release_dir" && sha256sum -c SHA256SUMS)
 done
 
-for digit in 0 1 2 3 4 5 6 7 8 9; do
-  asset="$ASSET_DIR/alarm/$digit.png"
-  if [ ! -f "$asset" ]; then
-    echo "Missing generated asset: $asset" >&2
-    exit 1
-  fi
-
-  actual_size=$(identify -format '%wx%h' "$asset")
-  if [ "$actual_size" != '14x22' ]; then
-    echo "Generated digit must be 14x22: $asset ($actual_size)" >&2
-    exit 1
-  fi
-done
-
 for asset in \
   fonts/DSEG-LICENSE.txt \
   fonts/DSEG7Classic-Bold.ttf \
   fonts/INTER-LICENSE.txt \
   fonts/Inter-Bold.ttf \
   fonts/Inter-Regular.ttf \
-  alarm/status-active-row.png \
   alarm/status-empty.png \
   alarm/status.png \
-  alarm/colon.png \
+  interaction/tap.png \
   weather/atmosphere.png \
   weather/cloudy.png \
   weather/heavy-rain.png \
@@ -134,7 +119,6 @@ done
 
 alarm_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status.png")
 alarm_empty_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status-empty.png")
-alarm_active_row_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status-active-row.png")
 
 if [ "$alarm_icon_size" != '28x28' ]; then
   echo "Alarm icon must be 28x28: $ASSET_DIR/alarm/status.png ($alarm_icon_size)" >&2
@@ -143,11 +127,6 @@ fi
 
 if [ "$alarm_empty_icon_size" != '28x28' ]; then
   echo "Empty alarm icon must be 28x28: $ASSET_DIR/alarm/status-empty.png ($alarm_empty_icon_size)" >&2
-  exit 1
-fi
-
-if [ "$alarm_active_row_size" != '163x30' ]; then
-  echo "Active alarm row must be 163x30: $ASSET_DIR/alarm/status-active-row.png ($alarm_active_row_size)" >&2
   exit 1
 fi
 
