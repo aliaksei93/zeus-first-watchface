@@ -28,8 +28,8 @@ const ALARM_ROW = {
 const WEATHER_ROW = {
   right: 435,
   iconW: 32,
-  signW: 14,
-  valueW: 54,
+  valueW: 48,
+  unitW: 26,
   gap: 10,
 }
 
@@ -40,7 +40,6 @@ function createDigitArray(root) {
 }
 
 const ALARM_DIGITS = createDigitArray(ALARM_ASSET_ROOT)
-const WEATHER_DIGITS = createDigitArray(WEATHER_ASSET_ROOT)
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 const WEATHER_ICONS = [
@@ -232,9 +231,9 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
-  const valueX = WEATHER_ROW.right - WEATHER_ROW.valueW
-  const signX = valueX - WEATHER_ROW.signW
-  const iconX = signX - WEATHER_ROW.gap - WEATHER_ROW.iconW
+  const unitX = WEATHER_ROW.right - WEATHER_ROW.unitW
+  const valueX = unitX - WEATHER_ROW.valueW
+  const iconX = valueX - WEATHER_ROW.gap - WEATHER_ROW.iconW
 
   hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
     x: scaled(iconX),
@@ -246,34 +245,35 @@ function createWeather(level) {
     type: hmUI.data_type.WEATHER_CURRENT,
     show_level: level,
   })
-  createImage(
-    signX,
-    144,
-    WEATHER_ASSET_ROOT + 'plus.png',
-    level,
-    WEATHER_ROW.signW,
-    22,
-  )
-
-  hmUI.createWidget(hmUI.widget.TEXT_IMG, {
+  hmUI.createWidget(hmUI.widget.TEXT_FONT, {
     x: scaled(valueX),
     y: scaled(144),
     w: scaled(WEATHER_ROW.valueW),
     h: scaled(22),
-    font_array: WEATHER_DIGITS,
-    unit_sc: WEATHER_ASSET_ROOT + 'unit-c.png',
-    unit_en: WEATHER_ASSET_ROOT + 'unit-c.png',
-    unit_tc: WEATHER_ASSET_ROOT + 'unit-c.png',
-    imperial_unit_sc: WEATHER_ASSET_ROOT + 'unit-f.png',
-    imperial_unit_en: WEATHER_ASSET_ROOT + 'unit-f.png',
-    imperial_unit_tc: WEATHER_ASSET_ROOT + 'unit-f.png',
-    negative_image: WEATHER_ASSET_ROOT + 'minus.png',
-    invalid_image: WEATHER_ASSET_ROOT + 'empty.png',
-    h_space: 0,
+    text_size: scaled(22),
+    font: INTER_REGULAR_FONT,
+    color: COLORS.primary,
+    char_space: 0,
+    line_space: 0,
     align_h: hmUI.align.RIGHT,
+    align_v: hmUI.align.CENTER_V,
+    text_style: hmUI.text_style.NONE,
     type: hmUI.data_type.WEATHER_CURRENT,
+    unit_type: 0,
     show_level: level,
   })
+
+  createText(
+    unitX,
+    144,
+    WEATHER_ROW.unitW,
+    22,
+    '°C',
+    22,
+    COLORS.primary,
+    level,
+    INTER_REGULAR_FONT,
+  )
 }
 
 function createTime(level) {

@@ -48,7 +48,6 @@ for target in \
 
   for digit in 0 1 2 3 4 5 6 7 8 9; do
     render_padded_glyph "$digit" 22 14 22 "$PRIMARY_COLOR" "$alarm_dir/$digit.png"
-    render_glyph "$digit" 22 13 22 "$PRIMARY_COLOR" "$weather_dir/$digit.png"
   done
 
   render_glyph ':' 22 7 22 "$PRIMARY_COLOR" "$alarm_dir/colon.png"
@@ -58,8 +57,4 @@ for target in \
   magick -size 163x30 "xc:$BACKGROUND_COLOR" "$alarm_dir/status.png" \
     -geometry +0+1 -composite -type TrueColorAlpha -define png:color-type=6 \
     "PNG32:$alarm_dir/status-active-row.png"
-  render_glyph '+' 22 14 22 "$PRIMARY_COLOR" "$weather_dir/plus.png"
-  render_glyph '-' 22 14 22 "$PRIMARY_COLOR" "$weather_dir/minus.png"
-  render_padded_glyph '℃' 22 28 22 "$PRIMARY_COLOR" "$weather_dir/unit-c.png"
-  render_padded_glyph '℉' 22 28 22 "$PRIMARY_COLOR" "$weather_dir/unit-f.png"
 done

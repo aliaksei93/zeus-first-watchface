@@ -93,25 +93,18 @@ for manifest in "$PROJECT_DIR"/releases/v*/release.json; do
   (cd "$release_dir" && sha256sum -c SHA256SUMS)
 done
 
-for group in alarm weather; do
-  for digit in 0 1 2 3 4 5 6 7 8 9; do
-    asset="$ASSET_DIR/$group/$digit.png"
-    if [ ! -f "$asset" ]; then
-      echo "Missing generated asset: $asset" >&2
-      exit 1
-    fi
+for digit in 0 1 2 3 4 5 6 7 8 9; do
+  asset="$ASSET_DIR/alarm/$digit.png"
+  if [ ! -f "$asset" ]; then
+    echo "Missing generated asset: $asset" >&2
+    exit 1
+  fi
 
-    expected_size='13x22'
-    if [ "$group" = 'alarm' ]; then
-      expected_size='14x22'
-    fi
-
-    actual_size=$(identify -format '%wx%h' "$asset")
-    if [ "$actual_size" != "$expected_size" ]; then
-      echo "Generated digit must be $expected_size: $asset ($actual_size)" >&2
-      exit 1
-    fi
-  done
+  actual_size=$(identify -format '%wx%h' "$asset")
+  if [ "$actual_size" != '14x22' ]; then
+    echo "Generated digit must be 14x22: $asset ($actual_size)" >&2
+    exit 1
+  fi
 done
 
 for asset in \
@@ -132,8 +125,6 @@ for asset in \
   weather/snow.png \
   weather/sunny.png \
   weather/thunder.png \
-  weather/unit-c.png \
-  weather/unit-f.png \
   weather/unknown.png; do
   if [ ! -f "$ASSET_DIR/$asset" ]; then
     echo "Missing required asset: $ASSET_DIR/$asset" >&2
@@ -167,30 +158,6 @@ for icon in weather/atmosphere.png weather/cloudy.png weather/heavy-rain.png \
 
   if [ "$icon_size" != '32x32' ]; then
     echo "Icon must be 32x32: $ASSET_DIR/$icon ($icon_size)" >&2
-    exit 1
-  fi
-done
-
-for unit in weather/unit-c.png weather/unit-f.png; do
-  unit_size=$(identify -format '%wx%h' "$ASSET_DIR/$unit")
-  content_bounds=$(identify -format '%@' "$ASSET_DIR/$unit")
-  content_size=${content_bounds%%+*}
-  content_width=${content_size%x*}
-  content_height=${content_size#*x}
-  offsets=${content_bounds#*+}
-  offset_x=${offsets%%+*}
-  offset_y=${offsets##*+}
-  right_margin=$((28 - content_width - offset_x))
-  bottom_margin=$((22 - content_height - offset_y))
-
-  if [ "$unit_size" != '28x22' ]; then
-    echo "Weather unit must be 28x22: $ASSET_DIR/$unit ($unit_size)" >&2
-    exit 1
-  fi
-
-  if [ "$offset_x" -lt 2 ] || [ "$offset_y" -lt 2 ] || \
-    [ "$right_margin" -lt 2 ] || [ "$bottom_margin" -lt 2 ]; then
-    echo "Weather unit needs 2px transparent padding: $ASSET_DIR/$unit ($content_bounds)" >&2
     exit 1
   fi
 done

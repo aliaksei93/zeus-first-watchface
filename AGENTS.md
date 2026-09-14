@@ -38,7 +38,7 @@
 
 ## Project Structure & Module Organization
 
-This is a minimal Zepp OS 2 watch-face project. `app.js` owns application-level lifecycle hooks and shared state. `watchface/index.js` contains the watch-face lifecycle and is the main place for UI construction and sensor binding. `app.json` defines metadata, API compatibility, permissions, and the supported device target. Keep device-specific resources under `assets/<resolution>-<device>/`, matching the target key in `app.json`. The ignored `dist/` directory contains temporary generated packages. Immutable preview packages live under `releases/v<version>/` with their manifest and checksum and are tracked by Git.
+This is a minimal Zepp OS API 4.2 watch-face project. `app.js` owns application-level lifecycle hooks and shared state. `watchface/index.js` contains the watch-face lifecycle and is the main place for UI construction and sensor binding. `app.json` defines metadata, API compatibility, permissions, and the supported device target. Keep device-specific resources under `assets/<resolution>-<device>/`, matching the target key in `app.json`. The ignored `dist/` directory contains temporary generated packages. Immutable preview packages live under `releases/v<version>/` with their manifest and checksum and are tracked by Git.
 
 ## Build, Test, and Development Commands
 
