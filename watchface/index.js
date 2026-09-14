@@ -1,6 +1,6 @@
-import { getDeviceInfo } from '@zos/device'
-import { Time } from '@zos/sensor'
-import * as hmUI from '@zos/ui'
+import { getDeviceInfo } from "@zos/device";
+import { Time } from "@zos/sensor";
+import * as hmUI from "@zos/ui";
 
 const COLORS = {
   background: 0x000000,
@@ -10,88 +10,87 @@ const COLORS = {
   aodGhost: 0x0f0f0f,
   primary: 0xe6f4c7,
   secondary: 0x9eae91,
-}
+};
 
-const ALARM_ASSET_ROOT = 'alarm/'
-const WEATHER_ASSET_ROOT = 'weather/'
-const DSEG7_FONT = 'fonts/DSEG7Classic-Bold.ttf'
-const INTER_REGULAR_FONT = 'fonts/Inter-Regular.ttf'
-const INTER_WEATHER_FONT = 'fonts/Inter-Weather.ttf'
-const INTER_BOLD_FONT = 'fonts/Inter-Bold.ttf'
+const ALARM_ASSET_ROOT = "alarm/";
+const WEATHER_ASSET_ROOT = "weather/";
+const DSEG7_FONT = "fonts/DSEG7Classic-Bold.ttf";
+const INTER_REGULAR_FONT = "fonts/Inter-Regular.ttf";
+const INTER_BOLD_FONT = "fonts/Inter-Bold.ttf";
 
 const ALARM_ROW = {
   x: 58,
   y: 140,
   w: 163,
   h: 30,
-}
+};
 
 const WEATHER_ROW = {
   textX: 383,
   textW: 65,
   iconW: 32,
   gap: 10,
-}
+};
 
 function createDigitArray(root) {
   return Array.from({ length: 10 }, function (_, index) {
-    return root + index + '.png'
-  })
+    return root + index + ".png";
+  });
 }
 
-const ALARM_DIGITS = createDigitArray(ALARM_ASSET_ROOT)
+const ALARM_DIGITS = createDigitArray(ALARM_ASSET_ROOT);
 
-const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const WEATHER_ICONS = [
-  'cloudy.png',
-  'rain.png',
-  'snow.png',
-  'sunny.png',
-  'cloudy.png',
-  'rain.png',
-  'snow.png',
-  'rain.png',
-  'snow.png',
-  'snow.png',
-  'heavy-rain.png',
-  'atmosphere.png',
-  'snow.png',
-  'atmosphere.png',
-  'atmosphere.png',
-  'thunder.png',
-  'snow.png',
-  'atmosphere.png',
-  'heavy-rain.png',
-  'heavy-rain.png',
-  'thunder.png',
-  'heavy-rain.png',
-  'atmosphere.png',
-  'atmosphere.png',
-  'heavy-rain.png',
-  'unknown.png',
-  'cloudy.png',
-  'rain.png',
-  'night.png',
+  "cloudy.png",
+  "rain.png",
+  "snow.png",
+  "sunny.png",
+  "cloudy.png",
+  "rain.png",
+  "snow.png",
+  "rain.png",
+  "snow.png",
+  "snow.png",
+  "heavy-rain.png",
+  "atmosphere.png",
+  "snow.png",
+  "atmosphere.png",
+  "atmosphere.png",
+  "thunder.png",
+  "snow.png",
+  "atmosphere.png",
+  "heavy-rain.png",
+  "heavy-rain.png",
+  "thunder.png",
+  "heavy-rain.png",
+  "atmosphere.png",
+  "atmosphere.png",
+  "heavy-rain.png",
+  "unknown.png",
+  "cloudy.png",
+  "rain.png",
+  "night.png",
 ].map(function (icon) {
-  return WEATHER_ASSET_ROOT + icon
-})
+  return WEATHER_ASSET_ROOT + icon;
+});
 
-let screenWidth = 480
-let screenHeight = 480
-let screenScale = 1
-let timeSensor = null
-let refreshTimer = null
-let normalTimeText = null
-let normalSecondText = null
-let normalDateText = null
-let aodTimeText = null
+let screenWidth = 480;
+let screenHeight = 480;
+let screenScale = 1;
+let timeSensor = null;
+let refreshTimer = null;
+let normalTimeText = null;
+let normalSecondText = null;
+let normalDateText = null;
+let aodTimeText = null;
 
 function scaled(value) {
-  return Math.round(value * screenScale)
+  return Math.round(value * screenScale);
 }
 
 function padded(value) {
-  return String(value).padStart(2, '0')
+  return String(value).padStart(2, "0");
 }
 
 function createImage(x, y, src, level, w, h) {
@@ -100,17 +99,17 @@ function createImage(x, y, src, level, w, h) {
     y: scaled(y),
     src: src,
     show_level: level,
-  }
+  };
 
   if (w !== undefined) {
-    options.w = scaled(w)
+    options.w = scaled(w);
   }
 
   if (h !== undefined) {
-    options.h = scaled(h)
+    options.h = scaled(h);
   }
 
-  return hmUI.createWidget(hmUI.widget.IMG, options)
+  return hmUI.createWidget(hmUI.widget.IMG, options);
 }
 
 function createText(x, y, w, h, text, size, color, level, font) {
@@ -127,13 +126,13 @@ function createText(x, y, w, h, text, size, color, level, font) {
     text_style: hmUI.text_style.NONE,
     char_space: 0,
     show_level: level,
-  }
+  };
 
   if (font) {
-    options.font = font
+    options.font = font;
   }
 
-  return hmUI.createWidget(hmUI.widget.TEXT, options)
+  return hmUI.createWidget(hmUI.widget.TEXT, options);
 }
 
 function createDivider(x, y, w, level) {
@@ -144,7 +143,7 @@ function createDivider(x, y, w, level) {
     h: scaled(2),
     color: COLORS.border,
     show_level: level,
-  })
+  });
 }
 
 function createFrame(level) {
@@ -155,64 +154,64 @@ function createFrame(level) {
     h: screenHeight,
     color: COLORS.background,
     show_level: level,
-  })
+  });
 
   createText(
     80,
     72,
     320,
     24,
-    'RETRO // DIGITAL',
+    "RETRO // DIGITAL",
     20,
     COLORS.accent,
     level,
     INTER_BOLD_FONT,
-  )
-  createDivider(55, 176, 380, level)
-  createDivider(50, 302, 380, level)
+  );
+  createDivider(55, 176, 380, level);
+  createDivider(50, 302, 380, level);
   createText(
     187,
     409,
     107,
     18,
-    'ZEPP OS / 24H',
+    "ZEPP OS / 24H",
     15,
     COLORS.secondary,
     level,
     INTER_REGULAR_FONT,
-  )
+  );
 }
 
 function createAlarm(level) {
   createImage(
     ALARM_ROW.x,
     ALARM_ROW.y + 1,
-    ALARM_ASSET_ROOT + 'status-empty.png',
+    ALARM_ASSET_ROOT + "status-empty.png",
     level,
     28,
     28,
-  )
+  );
   createText(
     ALARM_ROW.x + 39,
     ALARM_ROW.y + 4,
     124,
     22,
-    'NO ALARMS',
+    "NO ALARMS",
     20,
     COLORS.primary,
     level,
     INTER_BOLD_FONT,
-  )
+  );
 
   hmUI.createWidget(hmUI.widget.IMG_STATUS, {
     x: scaled(ALARM_ROW.x),
     y: scaled(ALARM_ROW.y),
     w: scaled(ALARM_ROW.w),
     h: scaled(ALARM_ROW.h),
-    src: ALARM_ASSET_ROOT + 'status-active-row.png',
+    src: ALARM_ASSET_ROOT + "status-active-row.png",
     type: hmUI.system_status.CLOCK,
     show_level: level,
-  })
+  });
 
   hmUI.createWidget(hmUI.widget.TEXT_IMG, {
     x: scaled(ALARM_ROW.x + 37),
@@ -220,18 +219,18 @@ function createAlarm(level) {
     w: scaled(65),
     h: scaled(22),
     font_array: ALARM_DIGITS,
-    dot_image: ALARM_ASSET_ROOT + 'colon.png',
-    invalid_image: ALARM_ASSET_ROOT + 'empty.png',
+    dot_image: ALARM_ASSET_ROOT + "colon.png",
+    invalid_image: ALARM_ASSET_ROOT + "empty.png",
     h_space: 0,
     padding: true,
     align_h: hmUI.align.LEFT,
     type: hmUI.data_type.ALARM_CLOCK,
     show_level: level,
-  })
+  });
 }
 
 function createWeather(level) {
-  const iconX = WEATHER_ROW.textX - WEATHER_ROW.gap - WEATHER_ROW.iconW
+  const iconX = WEATHER_ROW.textX - WEATHER_ROW.gap - WEATHER_ROW.iconW;
 
   hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
     x: scaled(iconX),
@@ -242,14 +241,14 @@ function createWeather(level) {
     image_length: WEATHER_ICONS.length,
     type: hmUI.data_type.WEATHER_CURRENT,
     show_level: level,
-  })
+  });
   hmUI.createWidget(hmUI.widget.TEXT_FONT, {
     x: scaled(WEATHER_ROW.textX),
     y: scaled(144),
     w: scaled(WEATHER_ROW.textW),
     h: scaled(22),
     text_size: scaled(22),
-    font: INTER_WEATHER_FONT,
+    font: INTER_REGULAR_FONT,
     color: COLORS.primary,
     char_space: 0,
     line_space: 0,
@@ -259,7 +258,7 @@ function createWeather(level) {
     type: hmUI.data_type.WEATHER_CURRENT,
     unit_type: 1,
     show_level: level,
-  })
+  });
 }
 
 function createTime(level) {
@@ -268,34 +267,34 @@ function createTime(level) {
     198,
     291,
     84,
-    '88:88',
+    "88:88",
     84,
     COLORS.normalGhost,
     level,
     DSEG7_FONT,
-  )
+  );
   normalTimeText = createText(
     95,
     198,
     291,
     84,
-    '',
+    "",
     84,
     COLORS.primary,
     level,
     DSEG7_FONT,
-  )
+  );
   normalSecondText = createText(
     387,
     258,
     40,
     24,
-    '',
+    "",
     24,
     COLORS.secondary,
     level,
     DSEG7_FONT,
-  )
+  );
 }
 
 function createDate(level) {
@@ -304,42 +303,42 @@ function createDate(level) {
     318,
     226,
     28,
-    '',
+    "",
     28,
     COLORS.primary,
     level,
     INTER_REGULAR_FONT,
-  )
+  );
 }
 
 function updateTime() {
-  const weekdayIndex = Math.max(0, Math.min(6, timeSensor.getDay() - 1))
+  const weekdayIndex = Math.max(0, Math.min(6, timeSensor.getDay() - 1));
 
   const timeText =
-    padded(timeSensor.getHours()) + ':' + padded(timeSensor.getMinutes())
-  const secondText = padded(timeSensor.getSeconds())
+    padded(timeSensor.getHours()) + ":" + padded(timeSensor.getMinutes());
+  const secondText = padded(timeSensor.getSeconds());
 
-  normalTimeText.setProperty(hmUI.prop.TEXT, timeText)
-  normalSecondText.setProperty(hmUI.prop.TEXT, secondText)
+  normalTimeText.setProperty(hmUI.prop.TEXT, timeText);
+  normalSecondText.setProperty(hmUI.prop.TEXT, secondText);
 
   if (aodTimeText !== null) {
-    aodTimeText.setProperty(hmUI.prop.TEXT, timeText)
+    aodTimeText.setProperty(hmUI.prop.TEXT, timeText);
   }
 
   const dateText =
     WEEKDAYS[weekdayIndex] +
-    ' ' +
+    " " +
     padded(timeSensor.getDate()) +
-    '.' +
+    "." +
     padded(timeSensor.getMonth()) +
-    '.' +
-    timeSensor.getFullYear()
+    "." +
+    timeSensor.getFullYear();
 
-  normalDateText.setProperty(hmUI.prop.TEXT, dateText)
+  normalDateText.setProperty(hmUI.prop.TEXT, dateText);
 }
 
 function updateDynamicData() {
-  updateTime()
+  updateTime();
 }
 
 function createTapZone(x, y, w, h, type, level) {
@@ -348,35 +347,35 @@ function createTapZone(x, y, w, h, type, level) {
     y: scaled(y),
     w: scaled(w),
     h: scaled(h),
-    src: ALARM_ASSET_ROOT + 'tap.png',
+    src: ALARM_ASSET_ROOT + "tap.png",
     type: type,
     show_level: level,
-  })
+  });
 }
 
 WatchFace({
   drawNormal() {
-    const level = hmUI.show_level.ONLY_NORMAL
+    const level = hmUI.show_level.ONLY_NORMAL;
 
-    createFrame(level)
-    createAlarm(level)
-    createWeather(level)
-    createTime(level)
-    createDate(level)
+    createFrame(level);
+    createAlarm(level);
+    createWeather(level);
+    createTime(level);
+    createDate(level);
 
-    createTapZone(310, 116, 135, 64, hmUI.data_type.WEATHER_CURRENT, level)
-    createTapZone(55, 116, 135, 64, hmUI.data_type.ALARM_CLOCK, level)
-    createTapZone(95, 198, 111, 84, hmUI.data_type.ALARM_CLOCK, level)
-    createTapZone(275, 198, 111, 84, hmUI.data_type.COUNT_DOWN, level)
-    createTapZone(387, 258, 40, 24, hmUI.data_type.STOP_WATCH, level)
+    createTapZone(310, 116, 135, 64, hmUI.data_type.WEATHER_CURRENT, level);
+    createTapZone(55, 116, 135, 64, hmUI.data_type.ALARM_CLOCK, level);
+    createTapZone(95, 198, 111, 84, hmUI.data_type.ALARM_CLOCK, level);
+    createTapZone(275, 198, 111, 84, hmUI.data_type.COUNT_DOWN, level);
+    createTapZone(387, 258, 40, 24, hmUI.data_type.STOP_WATCH, level);
 
     hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
       resume_call: updateDynamicData,
-    })
+    });
   },
 
   drawAod() {
-    const level = hmUI.show_level.ONAL_AOD
+    const level = hmUI.show_level.ONAL_AOD;
 
     hmUI.createWidget(hmUI.widget.FILL_RECT, {
       x: 0,
@@ -385,52 +384,52 @@ WatchFace({
       h: screenHeight,
       color: COLORS.background,
       show_level: level,
-    })
+    });
 
     createText(
       101,
       200,
       291,
       84,
-      '88:88',
+      "88:88",
       84,
       COLORS.aodGhost,
       level,
       DSEG7_FONT,
-    )
+    );
     aodTimeText = createText(
       95,
       198,
       291,
       84,
-      '',
+      "",
       84,
       COLORS.primary,
       level,
       DSEG7_FONT,
-    )
+    );
   },
 
   onInit() {
-    const deviceInfo = getDeviceInfo()
+    const deviceInfo = getDeviceInfo();
 
-    screenWidth = deviceInfo.width
-    screenHeight = deviceInfo.height
-    screenScale = screenWidth / 480
-    timeSensor = new Time()
+    screenWidth = deviceInfo.width;
+    screenHeight = deviceInfo.height;
+    screenScale = screenWidth / 480;
+    timeSensor = new Time();
   },
 
   build() {
-    this.drawNormal()
-    this.drawAod()
-    updateDynamicData()
-    refreshTimer = setInterval(updateTime, 1000)
+    this.drawNormal();
+    this.drawAod();
+    updateDynamicData();
+    refreshTimer = setInterval(updateTime, 1000);
   },
 
   onDestroy() {
     if (refreshTimer !== null) {
-      clearInterval(refreshTimer)
-      refreshTimer = null
+      clearInterval(refreshTimer);
+      refreshTimer = null;
     }
   },
-})
+});
