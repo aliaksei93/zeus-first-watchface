@@ -111,8 +111,10 @@ for asset in \
   fonts/DSEG-LICENSE.txt \
   fonts/DSEG7Classic-Bold.ttf \
   fonts/INTER-LICENSE.txt \
+  fonts/README.md \
   fonts/Inter-Bold.ttf \
   fonts/Inter-Regular.ttf \
+  fonts/Inter-Weather.ttf \
   alarm/status-active-row.png \
   alarm/status-empty.png \
   alarm/status.png \

@@ -16,6 +16,7 @@ const ALARM_ASSET_ROOT = 'alarm/'
 const WEATHER_ASSET_ROOT = 'weather/'
 const DSEG7_FONT = 'fonts/DSEG7Classic-Bold.ttf'
 const INTER_REGULAR_FONT = 'fonts/Inter-Regular.ttf'
+const INTER_WEATHER_FONT = 'fonts/Inter-Weather.ttf'
 const INTER_BOLD_FONT = 'fonts/Inter-Bold.ttf'
 
 const ALARM_ROW = {
@@ -26,10 +27,9 @@ const ALARM_ROW = {
 }
 
 const WEATHER_ROW = {
-  right: 435,
+  textX: 383,
+  textW: 65,
   iconW: 32,
-  valueW: 48,
-  unitW: 26,
   gap: 10,
 }
 
@@ -231,9 +231,7 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
-  const unitX = WEATHER_ROW.right - WEATHER_ROW.unitW
-  const valueX = unitX - WEATHER_ROW.valueW
-  const iconX = valueX - WEATHER_ROW.gap - WEATHER_ROW.iconW
+  const iconX = WEATHER_ROW.textX - WEATHER_ROW.gap - WEATHER_ROW.iconW
 
   hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
     x: scaled(iconX),
@@ -246,34 +244,22 @@ function createWeather(level) {
     show_level: level,
   })
   hmUI.createWidget(hmUI.widget.TEXT_FONT, {
-    x: scaled(valueX),
+    x: scaled(WEATHER_ROW.textX),
     y: scaled(144),
-    w: scaled(WEATHER_ROW.valueW),
+    w: scaled(WEATHER_ROW.textW),
     h: scaled(22),
     text_size: scaled(22),
-    font: INTER_REGULAR_FONT,
+    font: INTER_WEATHER_FONT,
     color: COLORS.primary,
     char_space: 0,
     line_space: 0,
-    align_h: hmUI.align.RIGHT,
+    align_h: hmUI.align.LEFT,
     align_v: hmUI.align.CENTER_V,
     text_style: hmUI.text_style.NONE,
     type: hmUI.data_type.WEATHER_CURRENT,
-    unit_type: 0,
+    unit_type: 1,
     show_level: level,
   })
-
-  createText(
-    unitX,
-    144,
-    WEATHER_ROW.unitW,
-    22,
-    '°C',
-    22,
-    COLORS.primary,
-    level,
-    INTER_REGULAR_FONT,
-  )
 }
 
 function createTime(level) {
