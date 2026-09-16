@@ -20,13 +20,13 @@ const INTER_REGULAR_FONT = "fonts/Inter-Regular.ttf";
 const INTER_BOLD_FONT = "fonts/Inter-Bold.ttf";
 
 const ALARM_ROW = {
-  x: 58,
+  x: 56,
   y: 140,
 };
 
 const WEATHER_ROW = {
-  textX: 383,
-  textW: 65,
+  iconX: 343,
+  textW: 50,
   iconW: 32,
   gap: 10,
 };
@@ -158,7 +158,7 @@ function createFrame(level) {
     level,
     INTER_BOLD_FONT,
   );
-  createDivider(55, 176, 380, level);
+  createDivider(50, 176, 380, level);
   createDivider(50, 302, 380, level);
   createText(
     187,
@@ -212,10 +212,10 @@ function createAlarm(level) {
 }
 
 function createWeather(level) {
-  const iconX = WEATHER_ROW.textX - WEATHER_ROW.gap - WEATHER_ROW.iconW;
+  const textX = WEATHER_ROW.iconX + WEATHER_ROW.iconW + WEATHER_ROW.gap;
 
   hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
-    x: scaled(iconX),
+    x: scaled(WEATHER_ROW.iconX),
     y: scaled(139),
     w: scaled(WEATHER_ROW.iconW),
     h: scaled(32),
@@ -225,7 +225,7 @@ function createWeather(level) {
     show_level: level,
   });
   hmUI.createWidget(hmUI.widget.TEXT_FONT, {
-    x: scaled(WEATHER_ROW.textX),
+    x: scaled(textX),
     y: scaled(144),
     w: scaled(WEATHER_ROW.textW),
     h: scaled(22),
