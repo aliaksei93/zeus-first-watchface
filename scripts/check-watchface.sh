@@ -101,16 +101,7 @@ for asset in \
   fonts/Inter-Regular.ttf \
   alarm/status-empty.png \
   alarm/status.png \
-  interaction/tap.png \
-  weather/atmosphere.png \
-  weather/cloudy.png \
-  weather/heavy-rain.png \
-  weather/night.png \
-  weather/rain.png \
-  weather/snow.png \
-  weather/sunny.png \
-  weather/thunder.png \
-  weather/unknown.png; do
+  interaction/tap.png; do
   if [ ! -f "$ASSET_DIR/$asset" ]; then
     echo "Missing required asset: $ASSET_DIR/$asset" >&2
     exit 1
@@ -130,13 +121,21 @@ if [ "$alarm_empty_icon_size" != '28x28' ]; then
   exit 1
 fi
 
-for icon in weather/atmosphere.png weather/cloudy.png weather/heavy-rain.png \
-  weather/night.png weather/rain.png weather/snow.png weather/sunny.png \
-  weather/thunder.png weather/unknown.png; do
+for name in cloud-drizzle cloud-fog cloud-hail cloud-lightning cloud-moon \
+  cloud-moon-rain cloud-off cloud-rain cloud-rain-wind cloud-snow \
+  cloud-sun cloud-sun-rain cloudy custom-sleet custom-thunder-hail \
+  haze moon sun sunrise sunset tornado wind; do
+  icon="weather/$name.png"
+
+  if [ ! -f "$ASSET_DIR/$icon" ]; then
+    echo "Missing required asset: $ASSET_DIR/$icon" >&2
+    exit 1
+  fi
+
   icon_size=$(identify -format '%wx%h' "$ASSET_DIR/$icon")
 
-  if [ "$icon_size" != '32x32' ]; then
-    echo "Icon must be 32x32: $ASSET_DIR/$icon ($icon_size)" >&2
+  if [ "$icon_size" != '28x28' ]; then
+    echo "Icon must be 28x28: $ASSET_DIR/$icon ($icon_size)" >&2
     exit 1
   fi
 done

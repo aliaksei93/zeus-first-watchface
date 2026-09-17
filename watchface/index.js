@@ -25,43 +25,43 @@ const ALARM_ROW = {
 };
 
 const WEATHER_ROW = {
-  iconX: 343,
+  iconX: 345,
   textW: 50,
-  iconW: 32,
-  gap: 10,
+  iconW: 28,
+  gap: 12,
 };
 
 const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const WEATHER_ICONS = [
-  "cloudy.png",
-  "rain.png",
-  "snow.png",
-  "sunny.png",
-  "cloudy.png",
-  "rain.png",
-  "snow.png",
-  "rain.png",
-  "snow.png",
-  "snow.png",
-  "heavy-rain.png",
-  "atmosphere.png",
-  "snow.png",
-  "atmosphere.png",
-  "atmosphere.png",
-  "thunder.png",
-  "snow.png",
-  "atmosphere.png",
-  "heavy-rain.png",
-  "heavy-rain.png",
-  "thunder.png",
-  "heavy-rain.png",
-  "atmosphere.png",
-  "atmosphere.png",
-  "heavy-rain.png",
-  "unknown.png",
-  "cloudy.png",
-  "rain.png",
-  "night.png",
+  'cloud-sun.png',           // 0  Cloudy
+  'cloud-sun-rain.png',      // 1  Showers
+  'cloud-snow.png',          // 2  Snow showers
+  'sun.png',                 // 3  Sunny
+  'cloudy.png',              // 4  Overcast
+  'cloud-drizzle.png',       // 5  Light rain
+  'cloud-snow.png',          // 6  Light snow
+  'cloud-rain.png',          // 7  Moderate rain
+  'cloud-snow.png',          // 8  Moderate snow
+  'cloud-snow.png',          // 9  Heavy snow
+  'cloud-rain-wind.png',     // 10 Heavy rain
+  'tornado.png',             // 11 Sandstorm
+  'custom-sleet.png',        // 12 Rain and snow
+  'cloud-fog.png',           // 13 Fog
+  'haze.png',                // 14 Haze
+  'cloud-lightning.png',     // 15 Thunderstorms
+  'cloud-snow.png',          // 16 Snowstorm
+  'wind.png',                // 17 Floating dust
+  'cloud-rain-wind.png',     // 18 Very heavy rainstorm
+  'cloud-hail.png',          // 19 Rain and hail
+  'custom-thunder-hail.png', // 20 Thunderstorms and hail
+  'cloud-rain-wind.png',     // 21 Heavy rainstorm
+  'wind.png',                // 22 Dust
+  'tornado.png',             // 23 Heavy sandstorm
+  'cloud-rain-wind.png',     // 24 Rainstorm
+  'cloud-off.png',           // 25 Unknown
+  'cloud-moon.png',          // 26 Cloudy nighttime
+  'cloud-moon-rain.png',     // 27 Showers nighttime
+  'moon.png',                // 28 Sunny nighttime
 ].map(function (icon) {
   return WEATHER_ASSET_ROOT + icon;
 });
@@ -216,9 +216,9 @@ function createWeather(level) {
 
   hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
     x: scaled(WEATHER_ROW.iconX),
-    y: scaled(139),
+    y: scaled(141),
     w: scaled(WEATHER_ROW.iconW),
-    h: scaled(32),
+    h: scaled(28),
     image_array: WEATHER_ICONS,
     image_length: WEATHER_ICONS.length,
     type: hmUI.data_type.WEATHER_CURRENT,
