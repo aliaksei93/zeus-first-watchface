@@ -1,4 +1,5 @@
 import { getDeviceInfo } from "@zos/device";
+import { launchApp, SYSTEM_APP_CALENDAR } from '@zos/router';
 import { Time } from "@zos/sensor";
 import * as hmUI from "@zos/ui";
 
@@ -335,6 +336,24 @@ function createTapZone(x, y, w, h, type, level) {
   });
 }
 
+function createCalendarTapZone(level) {
+  const tapZone = hmUI.createWidget(hmUI.widget.IMG, {
+    x: scaled(127),
+    y: scaled(318),
+    w: scaled(226),
+    h: scaled(28),
+    src: INTERACTION_ASSET_ROOT + "tap.png",
+    show_level: level,
+  });
+
+  tapZone.addEventListener(hmUI.event.CLICK_UP, function () {
+    launchApp({
+      appId: SYSTEM_APP_CALENDAR,
+      native: true,
+    });
+  });
+}
+
 WatchFace({
   drawNormal() {
     const level = hmUI.show_level.ONLY_NORMAL;
@@ -344,6 +363,7 @@ WatchFace({
     createWeather(level);
     createTime(level);
     createDate(level);
+    createCalendarTapZone(level);
 
     createTapZone(310, 116, 135, 64, hmUI.data_type.WEATHER_CURRENT, level);
     createTapZone(55, 116, 135, 64, hmUI.data_type.ALARM_CLOCK, level);
