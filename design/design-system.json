@@ -12,12 +12,12 @@
   },
   "screens": {
     "normal": {
-      "name": "Screen / Watchface / Normal · 480",
+      "name": "Screen / Watchface / v1.2 / Normal · 480",
       "referenceImage": "normal.png",
       "required": true
     },
     "aod": {
-      "name": "Screen / Watchface / AOD · 480",
+      "name": "Screen / Watchface / v1.2 / AOD · 480",
       "referenceImage": "aod.png",
       "required": true
     },

@@ -99,7 +99,6 @@ for asset in \
   fonts/INTER-LICENSE.txt \
   fonts/Inter-Bold.ttf \
   fonts/Inter-Regular.ttf \
-  alarm/status-empty.png \
   alarm/status.png \
   interaction/tap.png; do
   if [ ! -f "$ASSET_DIR/$asset" ]; then
@@ -109,15 +108,8 @@ for asset in \
 done
 
 alarm_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status.png")
-alarm_empty_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status-empty.png")
-
-if [ "$alarm_icon_size" != '28x28' ]; then
-  echo "Alarm icon must be 28x28: $ASSET_DIR/alarm/status.png ($alarm_icon_size)" >&2
-  exit 1
-fi
-
-if [ "$alarm_empty_icon_size" != '28x28' ]; then
-  echo "Empty alarm icon must be 28x28: $ASSET_DIR/alarm/status-empty.png ($alarm_empty_icon_size)" >&2
+if [ "$alarm_icon_size" != '30x30' ]; then
+  echo "Alarm icon must be 30x30: $ASSET_DIR/alarm/status.png ($alarm_icon_size)" >&2
   exit 1
 fi
 
@@ -134,8 +126,15 @@ for name in cloud-drizzle cloud-fog cloud-hail cloud-lightning cloud-moon \
 
   icon_size=$(identify -format '%wx%h' "$ASSET_DIR/$icon")
 
-  if [ "$icon_size" != '28x28' ]; then
-    echo "Icon must be 28x28: $ASSET_DIR/$icon ($icon_size)" >&2
+  expected_size='30x30'
+  case "$name" in
+    sunrise|sunset)
+      expected_size='28x28'
+      ;;
+  esac
+
+  if [ "$icon_size" != "$expected_size" ]; then
+    echo "Icon must be $expected_size: $ASSET_DIR/$icon ($icon_size)" >&2
     exit 1
   fi
 done
