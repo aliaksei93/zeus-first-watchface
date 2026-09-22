@@ -96,6 +96,7 @@ done
 for asset in \
   fonts/DSEG-LICENSE.txt \
   fonts/DSEG7Classic-Bold.ttf \
+  fonts/DSEG7Classic-BoldItalic.ttf \
   fonts/INTER-LICENSE.txt \
   fonts/Inter-Bold.ttf \
   fonts/Inter-Regular.ttf \
