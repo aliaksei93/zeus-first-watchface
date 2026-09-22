@@ -16,7 +16,9 @@ done
 cd "$PROJECT_DIR"
 
 node --check app.js
-node --check watchface/index.js
+while IFS= read -r source; do
+  node --check "$source"
+done < <(find watchface -type f -name '*.js' -print | sort)
 jq empty app.json
 jq -e '
   .direction == "design-system-to-repository" and

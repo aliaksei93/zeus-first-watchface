@@ -38,13 +38,13 @@
 
 ## Project Structure & Module Organization
 
-This is a minimal Zepp OS API 4.2 watch-face project. `app.js` owns application-level lifecycle hooks and shared state. `watchface/index.js` contains the watch-face lifecycle and is the main place for UI construction and sensor binding. `app.json` defines metadata, API compatibility, permissions, and the supported device target. Keep device-specific resources under `assets/<resolution>-<device>/`, matching the target key in `app.json`. The ignored `dist/` directory contains temporary generated packages. Immutable preview packages live under `releases/v<version>/` with their manifest and checksum and are tracked by Git.
+This is a Zepp OS API 4.2 watch-face project. `app.js` owns application-level lifecycle hooks. `watchface/index.js` is the composition root for the watch-face lifecycle, sensors, and refresh timer; keep widget construction in `watchface/domains/{clock,weather,alarm,navigation}/`, frame drawing in `watchface/shell/`, and reusable UI/formatting helpers in `watchface/shared/`. Layout, colors/fonts, and asset paths are in `watchface/config/*.ts`. These config files intentionally use JavaScript-compatible TypeScript syntax because Zeus 1.9.3 bundles them directly; keep TypeScript-only syntax out of runtime config files unless the build pipeline is changed. `app.json` defines metadata, API compatibility, permissions, and the supported device target. Keep device-specific resources under `assets/<resolution>-<device>/`, matching the target key in `app.json`. The ignored `dist/` directory contains temporary generated packages. Immutable preview packages live under `releases/v<version>/` with their manifest and checksum and are tracked by Git.
 
 ## Build, Test, and Development Commands
 
 The project has a small `package.json`, while Zeus itself is provided by the globally installed CLI. Run commands from the repository root:
 
-- `npm run check` performs syntax/config/asset validation and one target-specific Zeus build.
+- `npm run typecheck` validates the TypeScript config modules; `npm run check` additionally performs syntax/config/asset validation and one target-specific Zeus build.
 - `npm run dev` runs target-specific `zeus dev` and writes its log outside the repository so the watcher cannot rebuild on its own output.
 - `npm run preview` (also `npm run preview:release`) requires a clean source tree, builds and uploads a target-specific preview, displays its QR code, and archives the exact uploaded `.zab` under `releases/v<app.version.name>/`. A version cannot be archived twice.
 - `npm run preview:zab -- releases/v<version>/<package>.zab` verifies and uploads an archived package without rebuilding it, then displays a fresh QR code. The private uploader is pinned to Zeus CLI 1.9.3 and must be reviewed when Zeus changes.

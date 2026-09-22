@@ -4,18 +4,20 @@
   "scripts": {
     "assets": "bash scripts/generate-watchface-assets.sh",
     "build": "zeus build -t 480x480-amazfit-balance-2",
-    "check": "bash scripts/check-watchface.sh",
+    "check": "npm run typecheck && bash scripts/check-watchface.sh",
     "dev": "bash scripts/dev-watchface.sh",
     "preview": "node scripts/preview-release.mjs",
     "preview:release": "node scripts/preview-release.mjs",
     "preview:zab": "node scripts/preview-zab.mjs",
     "status": "zeus status",
+    "typecheck": "tsc --noEmit",
     "visual:diff": "bash scripts/create-visual-diff.sh"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
-    "@zeppos/device-types": "4.0.0"
+    "@zeppos/device-types": "4.0.0",
+    "typescript": "5.9.3"
   }
 }

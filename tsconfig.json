@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "target": "es2020",
     "allowJs": true,
+    "allowImportingTsExtensions": true,
     "checkJs": false,
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true
   },
   "exclude": [
     "node_modules",
@@ -16,6 +19,7 @@
   ],
   "include": [
     "app.js",
-    "watchface/**/*.js"
+    "watchface/**/*.js",
+    "watchface/**/*.ts"
   ]
 }
