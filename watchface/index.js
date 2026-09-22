@@ -1,14 +1,14 @@
 import { getDeviceInfo } from "@zos/device";
-import { launchApp, SYSTEM_APP_CALENDAR } from '@zos/router';
-import { Time, Weather } from '@zos/sensor';
+import { launchApp, SYSTEM_APP_CALENDAR } from "@zos/router";
+import { Time, Weather } from "@zos/sensor";
 import * as hmUI from "@zos/ui";
 
 const COLORS = {
   background: 0x000000,
   accent: 0xf2c94c,
   border: 0x65735c,
-  normalGhost: 0x242424,
-  aodGhost: 0x242424,
+  normalGhost: 0x1e1e1e,
+  aodGhost: 0x1e1e1e,
   primary: 0xe6f4c7,
   secondary: 0x9eae91,
 };
@@ -41,35 +41,35 @@ const SUN_ROW = {
 
 const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const WEATHER_ICONS = [
-  'cloud-sun.png',           // 0  Cloudy
-  'cloud-sun-rain.png',      // 1  Showers
-  'cloud-snow.png',          // 2  Snow showers
-  'sun.png',                 // 3  Sunny
-  'cloudy.png',              // 4  Overcast
-  'cloud-drizzle.png',       // 5  Light rain
-  'cloud-snow.png',          // 6  Light snow
-  'cloud-rain.png',          // 7  Moderate rain
-  'cloud-snow.png',          // 8  Moderate snow
-  'cloud-snow.png',          // 9  Heavy snow
-  'cloud-rain-wind.png',     // 10 Heavy rain
-  'tornado.png',             // 11 Sandstorm
-  'custom-sleet.png',        // 12 Rain and snow
-  'cloud-fog.png',           // 13 Fog
-  'haze.png',                // 14 Haze
-  'cloud-lightning.png',     // 15 Thunderstorms
-  'cloud-snow.png',          // 16 Snowstorm
-  'wind.png',                // 17 Floating dust
-  'cloud-rain-wind.png',     // 18 Very heavy rainstorm
-  'cloud-hail.png',          // 19 Rain and hail
-  'custom-thunder-hail.png', // 20 Thunderstorms and hail
-  'cloud-rain-wind.png',     // 21 Heavy rainstorm
-  'wind.png',                // 22 Dust
-  'tornado.png',             // 23 Heavy sandstorm
-  'cloud-rain-wind.png',     // 24 Rainstorm
-  'cloud-off.png',           // 25 Unknown
-  'cloud-moon.png',          // 26 Cloudy nighttime
-  'cloud-moon-rain.png',     // 27 Showers nighttime
-  'moon.png',                // 28 Sunny nighttime
+  "cloud-sun.png", // 0  Cloudy
+  "cloud-sun-rain.png", // 1  Showers
+  "cloud-snow.png", // 2  Snow showers
+  "sun.png", // 3  Sunny
+  "cloudy.png", // 4  Overcast
+  "cloud-drizzle.png", // 5  Light rain
+  "cloud-snow.png", // 6  Light snow
+  "cloud-rain.png", // 7  Moderate rain
+  "cloud-snow.png", // 8  Moderate snow
+  "cloud-snow.png", // 9  Heavy snow
+  "cloud-rain-wind.png", // 10 Heavy rain
+  "tornado.png", // 11 Sandstorm
+  "custom-sleet.png", // 12 Rain and snow
+  "cloud-fog.png", // 13 Fog
+  "haze.png", // 14 Haze
+  "cloud-lightning.png", // 15 Thunderstorms
+  "cloud-snow.png", // 16 Snowstorm
+  "wind.png", // 17 Floating dust
+  "cloud-rain-wind.png", // 18 Very heavy rainstorm
+  "cloud-hail.png", // 19 Rain and hail
+  "custom-thunder-hail.png", // 20 Thunderstorms and hail
+  "cloud-rain-wind.png", // 21 Heavy rainstorm
+  "wind.png", // 22 Dust
+  "tornado.png", // 23 Heavy sandstorm
+  "cloud-rain-wind.png", // 24 Rainstorm
+  "cloud-off.png", // 25 Unknown
+  "cloud-moon.png", // 26 Cloudy nighttime
+  "cloud-moon-rain.png", // 27 Showers nighttime
+  "moon.png", // 28 Sunny nighttime
 ].map(function (icon) {
   return WEATHER_ASSET_ROOT + icon;
 });
@@ -86,7 +86,7 @@ let normalDateText = null;
 let sunIcon = null;
 let sunTimesText = null;
 let sunTimes = null;
-let sunTimesDate = '';
+let sunTimesDate = "";
 let aodTimeText = null;
 
 function scaled(value) {
@@ -228,9 +228,9 @@ function createWeather(level) {
 function getDateKey() {
   return (
     timeSensor.getFullYear() +
-    '-' +
+    "-" +
     padded(timeSensor.getMonth()) +
-    '-' +
+    "-" +
     padded(timeSensor.getDate())
   );
 }
@@ -259,21 +259,21 @@ function updateSunIcon() {
     refreshSunTimes();
   }
 
-  let asset = WEATHER_ASSET_ROOT + 'sunrise.png';
-  let text = '--';
+  let asset = WEATHER_ASSET_ROOT + "sunrise.png";
+  let text = "--";
 
   if (sunTimes !== null) {
-    const currentMinutes =
-      timeSensor.getHours() * 60 + timeSensor.getMinutes();
-    const sunriseMinutes =
-      sunTimes.sunrise.hour * 60 + sunTimes.sunrise.minute;
+    const currentMinutes = timeSensor.getHours() * 60 + timeSensor.getMinutes();
+    const sunriseMinutes = sunTimes.sunrise.hour * 60 + sunTimes.sunrise.minute;
     const sunsetMinutes = sunTimes.sunset.hour * 60 + sunTimes.sunset.minute;
 
     if (currentMinutes >= sunriseMinutes && currentMinutes < sunsetMinutes) {
-      asset = WEATHER_ASSET_ROOT + 'sunset.png';
-      text = padded(sunTimes.sunset.hour) + ':' + padded(sunTimes.sunset.minute);
+      asset = WEATHER_ASSET_ROOT + "sunset.png";
+      text =
+        padded(sunTimes.sunset.hour) + ":" + padded(sunTimes.sunset.minute);
     } else {
-      text = padded(sunTimes.sunrise.hour) + ':' + padded(sunTimes.sunrise.minute);
+      text =
+        padded(sunTimes.sunrise.hour) + ":" + padded(sunTimes.sunrise.minute);
     }
   }
 
@@ -287,7 +287,7 @@ function createSun(level) {
   sunIcon = createImage(
     SUN_ROW.iconX,
     417,
-    WEATHER_ASSET_ROOT + 'sunrise.png',
+    WEATHER_ASSET_ROOT + "sunrise.png",
     level,
     SUN_ROW.iconW,
     SUN_ROW.iconW,
@@ -297,7 +297,7 @@ function createSun(level) {
     420,
     SUN_ROW.textW,
     22,
-    '--',
+    "--",
     22,
     COLORS.primary,
     level,
@@ -464,9 +464,9 @@ WatchFace({
       90,
       "88:88",
       90,
-    COLORS.aodGhost,
-    level,
-    DSEG7_FONT,
+      COLORS.aodGhost,
+      level,
+      DSEG7_FONT,
     );
     aodTimeText = createText(
       84,
@@ -475,9 +475,9 @@ WatchFace({
       90,
       "",
       90,
-    COLORS.primary,
-    level,
-    DSEG7_FONT,
+      COLORS.primary,
+      level,
+      DSEG7_FONT,
     );
   },
 
