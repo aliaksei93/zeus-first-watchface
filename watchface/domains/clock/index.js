@@ -4,27 +4,23 @@ import {
   DATE_FORMAT_MDY,
   DATE_FORMAT_YMD,
   getDateFormat,
+  getLanguage,
 } from "@zos/settings";
 
 import { LAYOUT } from "../../config/layout.ts";
 import { COLORS, FONTS } from "../../config/theme.ts";
 import { padTwo } from "../../shared/format.js";
-
-const WEEKDAYS = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-];
+import {
+  INTER_WEEKDAY_LANGUAGE_IDS,
+  WEEKDAYS_BY_LANGUAGE,
+} from "../../shared/weekdays.js";
 
 export function createClockDomain({ ui, timeSensor }) {
   let normalTimeText = null;
   let normalSecondText = null;
   let normalDateText = null;
-  let normalWeekdayText = null;
+  let normalWeekdayInterText = null;
+  let normalWeekdaySystemText = null;
   let aodTimeText = null;
 
   function drawNormal(level) {
@@ -58,12 +54,19 @@ export function createClockDomain({ ui, timeSensor }) {
       level,
       font: FONTS.interRegular,
     });
-    normalWeekdayText = ui.createText({
+    normalWeekdayInterText = ui.createText({
       ...weekday,
       text: "",
       color: COLORS.accent,
       level,
       font: FONTS.interRegular,
+      alignH: hmUI.align.CENTER_H,
+    });
+    normalWeekdaySystemText = ui.createText({
+      ...weekday,
+      text: "",
+      color: COLORS.accent,
+      level,
       alignH: hmUI.align.CENTER_H,
     });
   }
@@ -120,7 +123,15 @@ export function createClockDomain({ ui, timeSensor }) {
     }
 
     normalDateText.setProperty(hmUI.prop.TEXT, dateText);
-    normalWeekdayText.setProperty(hmUI.prop.TEXT, WEEKDAYS[weekdayIndex]);
+    const language = getLanguage();
+    const weekdays = WEEKDAYS_BY_LANGUAGE[language] || WEEKDAYS_BY_LANGUAGE[2];
+    const weekdayText = weekdays[weekdayIndex];
+    const useInter = INTER_WEEKDAY_LANGUAGE_IDS[language] === true;
+
+    normalWeekdayInterText.setProperty(hmUI.prop.TEXT, weekdayText);
+    normalWeekdaySystemText.setProperty(hmUI.prop.TEXT, weekdayText);
+    normalWeekdayInterText.setProperty(hmUI.prop.VISIBLE, useInter);
+    normalWeekdaySystemText.setProperty(hmUI.prop.VISIBLE, !useInter);
   }
 
   return {
