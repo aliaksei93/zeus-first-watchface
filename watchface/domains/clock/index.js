@@ -1,4 +1,10 @@
 import * as hmUI from "@zos/ui";
+import {
+  DATE_FORMAT_DMY,
+  DATE_FORMAT_MDY,
+  DATE_FORMAT_YMD,
+  getDateFormat,
+} from "@zos/settings";
 
 import { LAYOUT } from "../../config/layout.ts";
 import { COLORS, FONTS } from "../../config/theme.ts";
@@ -96,12 +102,22 @@ export function createClockDomain({ ui, timeSensor }) {
       aodTimeText.setProperty(hmUI.prop.TEXT, timeText);
     }
 
-    const dateText =
-      padTwo(timeSensor.getDate()) +
-      "." +
-      padTwo(timeSensor.getMonth()) +
-      "." +
-      String(timeSensor.getFullYear());
+    const day = padTwo(timeSensor.getDate());
+    const month = padTwo(timeSensor.getMonth());
+    const year = String(timeSensor.getFullYear());
+    let dateText = day + "." + month + "." + year;
+
+    switch (getDateFormat()) {
+      case DATE_FORMAT_YMD:
+        dateText = year + "." + month + "." + day;
+        break;
+      case DATE_FORMAT_MDY:
+        dateText = month + "." + day + "." + year;
+        break;
+      case DATE_FORMAT_DMY:
+      default:
+        break;
+    }
 
     normalDateText.setProperty(hmUI.prop.TEXT, dateText);
     normalWeekdayText.setProperty(hmUI.prop.TEXT, WEEKDAYS[weekdayIndex]);
