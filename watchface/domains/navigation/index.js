@@ -1,4 +1,7 @@
-import { launchApp, SYSTEM_APP_CALENDAR } from '@zos/router'
+import {
+  launchApp,
+  SYSTEM_APP_CALENDAR,
+} from '@zos/router'
 import * as hmUI from '@zos/ui'
 
 import { ASSETS } from '../../config/assets.ts'
@@ -33,10 +36,30 @@ export function createNavigationDomain({ ui }) {
     })
   }
 
+  function createEventTapZone(level) {
+    const rect = LAYOUT.interactions.schedule
+    const tapZone = ui.createImage({
+      ...rect,
+      src: ASSETS.interaction.tap,
+      level,
+    })
+
+    tapZone.addEventListener(hmUI.event.CLICK_UP, function () {
+      launchApp({
+        appId: SYSTEM_APP_CALENDAR,
+        native: true,
+      })
+    })
+  }
+
   function draw(level) {
     const interactions = LAYOUT.interactions
 
     createCalendarTapZone(level)
+    createEventTapZone(level)
+    if (LAYOUT.battery.enabled) {
+      createTapZone(interactions.battery, hmUI.data_type.BATTERY, level)
+    }
     createTapZone(interactions.weather, hmUI.data_type.WEATHER_CURRENT, level)
     createTapZone(interactions.sun, hmUI.data_type.SUN_CURRENT, level)
     createTapZone(interactions.alarm, hmUI.data_type.ALARM_CLOCK, level)

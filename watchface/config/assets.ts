@@ -1,10 +1,19 @@
 const ALARM_ASSET_ROOT = 'alarm/'
+const BATTERY_ASSET_ROOT = 'battery/'
 const INTERACTION_ASSET_ROOT = 'interaction/'
 const WEATHER_ASSET_ROOT = 'weather/'
 
 export const ASSETS = {
   alarm: {
     status: ALARM_ASSET_ROOT + 'status.png',
+  },
+  battery: {
+    charging: BATTERY_ASSET_ROOT + 'charging.png',
+    empty: BATTERY_ASSET_ROOT + 'empty.png',
+    full: BATTERY_ASSET_ROOT + 'full.png',
+    low: BATTERY_ASSET_ROOT + 'low.png',
+    medium: BATTERY_ASSET_ROOT + 'medium.png',
+    warning: BATTERY_ASSET_ROOT + 'warning.png',
   },
   interaction: {
     tap: INTERACTION_ASSET_ROOT + 'tap.png',

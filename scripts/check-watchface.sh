@@ -33,6 +33,7 @@ bash -n scripts/create-visual-diff.sh
 node --check scripts/zeus-preview-utils.mjs
 node --check scripts/preview-release.mjs
 node --check scripts/preview-zab.mjs
+node scripts/check-layout.mjs
 
 for manifest in "$PROJECT_DIR"/releases/v*/release.json; do
   if [ ! -e "$manifest" ]; then
@@ -103,6 +104,12 @@ for asset in \
   fonts/Inter-Bold.ttf \
   fonts/Inter-Regular.ttf \
   alarm/status.png \
+  battery/charging.png \
+  battery/empty.png \
+  battery/full.png \
+  battery/low.png \
+  battery/medium.png \
+  battery/warning.png \
   interaction/tap.png; do
   if [ ! -f "$ASSET_DIR/$asset" ]; then
     echo "Missing required asset: $ASSET_DIR/$asset" >&2
@@ -111,10 +118,20 @@ for asset in \
 done
 
 alarm_icon_size=$(identify -format '%wx%h' "$ASSET_DIR/alarm/status.png")
-if [ "$alarm_icon_size" != '30x30' ]; then
-  echo "Alarm icon must be 30x30: $ASSET_DIR/alarm/status.png ($alarm_icon_size)" >&2
+if [ "$alarm_icon_size" != '28x28' ]; then
+  echo "Alarm icon must be 28x28: $ASSET_DIR/alarm/status.png ($alarm_icon_size)" >&2
   exit 1
 fi
+
+for battery_state in charging empty full low medium warning; do
+  battery_icon="$ASSET_DIR/battery/$battery_state.png"
+  battery_icon_size=$(identify -format '%wx%h' "$battery_icon")
+
+  if [ "$battery_icon_size" != '40x40' ]; then
+    echo "Battery icon must be 40x40: $battery_icon ($battery_icon_size)" >&2
+    exit 1
+  fi
+done
 
 for name in cloud-drizzle cloud-fog cloud-hail cloud-lightning cloud-moon \
   cloud-moon-rain cloud-off cloud-rain cloud-rain-wind cloud-snow \
