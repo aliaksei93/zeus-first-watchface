@@ -24,6 +24,7 @@ export const LAYOUT = {
   },
   clock: {
     time: { x: 84, y: 195, w: 312, h: 90, size: 90 },
+    period: { x: 399, y: 195, w: 32, h: 21, size: 20 },
     seconds: { x: 394, y: 259, w: 43, h: 26, size: 26 },
     date: { x: 169, y: 65, w: 143, h: 26, size: 26 },
     weekday: { x: 120, y: 334, w: 240, h: 32, size: 26 },

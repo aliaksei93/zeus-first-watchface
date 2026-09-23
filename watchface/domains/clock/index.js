@@ -5,6 +5,8 @@ import {
   DATE_FORMAT_YMD,
   getDateFormat,
   getLanguage,
+  getTimeFormat,
+  TIME_FORMAT_12,
 } from "@zos/settings";
 
 import { LAYOUT } from "../../config/layout.ts";
@@ -17,14 +19,16 @@ import {
 
 export function createClockDomain({ ui, timeSensor }) {
   let normalTimeText = null;
+  let normalPeriodText = null;
   let normalSecondText = null;
   let normalDateText = null;
   let normalWeekdayInterText = null;
   let normalWeekdaySystemText = null;
   let aodTimeText = null;
+  let aodPeriodText = null;
 
   function drawNormal(level) {
-    const { time, seconds, date, weekday } = LAYOUT.clock;
+    const { time, period, seconds, date, weekday } = LAYOUT.clock;
 
     ui.createText({
       ...time,
@@ -39,6 +43,13 @@ export function createClockDomain({ ui, timeSensor }) {
       color: COLORS.primary,
       level,
       font: FONTS.digitalBold,
+    });
+    normalPeriodText = ui.createText({
+      ...period,
+      text: "",
+      color: COLORS.secondary,
+      level,
+      font: FONTS.interRegular,
     });
     normalSecondText = ui.createText({
       ...seconds,
@@ -72,7 +83,7 @@ export function createClockDomain({ ui, timeSensor }) {
   }
 
   function drawAod(level) {
-    const { time } = LAYOUT.clock;
+    const { time, period } = LAYOUT.clock;
 
     ui.createText({
       ...time,
@@ -88,14 +99,26 @@ export function createClockDomain({ ui, timeSensor }) {
       level,
       font: FONTS.digitalBold,
     });
+    aodPeriodText = ui.createText({
+      ...period,
+      text: "",
+      color: COLORS.secondary,
+      level,
+      font: FONTS.interRegular,
+    });
   }
 
   function update() {
     const weekdayIndex = Math.max(0, Math.min(6, timeSensor.getDay() - 1));
-    const timeText =
-      padTwo(timeSensor.getHours()) + ":" + padTwo(timeSensor.getMinutes());
+    const hours = timeSensor.getHours();
+    const use12Hour = getTimeFormat() === TIME_FORMAT_12;
+    const displayHours = use12Hour ? timeSensor.getFormatHour() : hours;
+    const timeText = padTwo(displayHours) + ":" + padTwo(timeSensor.getMinutes());
+    const periodText = hours < 12 ? "AM" : "PM";
 
     normalTimeText.setProperty(hmUI.prop.TEXT, timeText);
+    normalPeriodText.setProperty(hmUI.prop.TEXT, periodText);
+    normalPeriodText.setProperty(hmUI.prop.VISIBLE, use12Hour);
     normalSecondText.setProperty(
       hmUI.prop.TEXT,
       padTwo(timeSensor.getSeconds()),
@@ -103,6 +126,8 @@ export function createClockDomain({ ui, timeSensor }) {
 
     if (aodTimeText !== null) {
       aodTimeText.setProperty(hmUI.prop.TEXT, timeText);
+      aodPeriodText.setProperty(hmUI.prop.TEXT, periodText);
+      aodPeriodText.setProperty(hmUI.prop.VISIBLE, use12Hour);
     }
 
     const day = padTwo(timeSensor.getDate());
