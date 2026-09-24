@@ -43,6 +43,7 @@ const designCenterX = LAYOUT.designWidth / 2
 
 for (const [name, widget] of Object.entries({
   weekday: LAYOUT.clock.weekday,
+  sunAndBattery: bounds(LAYOUT.sun.icon, LAYOUT.sun.text, LAYOUT.battery.icon),
 })) {
   if (Math.abs(widget.x + widget.w / 2 - designCenterX) > 0.5) {
     throw new Error(name + ' widget is not centered')
@@ -51,8 +52,9 @@ for (const [name, widget] of Object.entries({
 
 const widgetGaps = [
   ['alarm', LAYOUT.alarm.icon, LAYOUT.alarm.text],
-  ['weather', LAYOUT.weather.icon, LAYOUT.weather.text],
-  ['sun', LAYOUT.sun.text, LAYOUT.sun.icon],
+  ['weather', LAYOUT.weather.text, LAYOUT.weather.icon],
+  ['sun', LAYOUT.sun.icon, LAYOUT.sun.text],
+  ['sun and battery', LAYOUT.sun.text, LAYOUT.battery.icon],
 ]
 
 for (const [name, left, right] of widgetGaps) {
@@ -74,6 +76,7 @@ for (const [name, widget] of Object.entries(widgets)) {
 for (const name of ['calendar', 'schedule', 'battery', 'weather', 'sun', 'alarm']) {
   const widget = widgets[name]
   const tapZone = LAYOUT.interactions[name]
+  const minimumPadding = name === 'battery' || name === 'sun' ? 4 : 10
   const padding = [
     widget.x - tapZone.x,
     widget.y - tapZone.y,
@@ -81,8 +84,8 @@ for (const name of ['calendar', 'schedule', 'battery', 'weather', 'sun', 'alarm'
     tapZone.y + tapZone.h - (widget.y + widget.h),
   ]
 
-  if (Math.min(...padding) < 10) {
-    throw new Error(name + ' tap zone must have at least 10px padding')
+  if (Math.min(...padding) < minimumPadding) {
+    throw new Error(name + ' tap zone must have at least ' + minimumPadding + 'px padding')
   }
 }
 

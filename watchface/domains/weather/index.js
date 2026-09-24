@@ -99,7 +99,7 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
       char_space: 0,
       line_space: 0,
       padding: true,
-      align_h: hmUI.align.LEFT,
+      align_h: hmUI.align.RIGHT,
       align_v: hmUI.align.CENTER_V,
       text_style: hmUI.text_style.NONE,
       type: hmUI.data_type.WEATHER_CURRENT,

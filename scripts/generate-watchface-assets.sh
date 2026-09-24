@@ -25,8 +25,9 @@ for state in charging empty full low medium warning; do
     exit 1
   fi
 
-  magick -background none -density 288 "$source" \
-    -resize 34x34 -gravity center -extent 34x34 "PNG32:$output"
+  magick -background none -density 1152 "$source" \
+    -filter Lanczos -resize 28x28 -gravity center -extent 28x28 \
+    "PNG32:$output"
 done
 
 for name in sunrise sunset; do

@@ -127,8 +127,8 @@ for battery_state in charging empty full low medium warning; do
   battery_icon="$ASSET_DIR/battery/$battery_state.png"
   battery_icon_size=$(identify -format '%wx%h' "$battery_icon")
 
-  if [ "$battery_icon_size" != '34x34' ]; then
-    echo "Battery icon must be 34x34: $battery_icon ($battery_icon_size)" >&2
+  if [ "$battery_icon_size" != '28x28' ]; then
+    echo "Battery icon must be 28x28: $battery_icon ($battery_icon_size)" >&2
     exit 1
   fi
 done
