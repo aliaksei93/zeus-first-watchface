@@ -1,4 +1,5 @@
 import * as hmUI from '@zos/ui'
+import { getTimeFormat, TIME_FORMAT_12 } from '@zos/settings'
 
 import { ASSETS, WEATHER_ICONS } from '../../config/assets.ts'
 import { LAYOUT } from '../../config/layout.ts'
@@ -19,6 +20,15 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
       '-' +
       padTwo(timeSensor.getDate())
     )
+  }
+
+  function formatSunTime(time) {
+    const hours =
+      getTimeFormat() === TIME_FORMAT_12
+        ? ((time.hour + 11) % 12) + 1
+        : time.hour
+
+    return padTwo(hours) + ':' + padTwo(time.minute)
   }
 
   function refresh() {
@@ -55,13 +65,9 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
 
       if (currentMinutes >= sunriseMinutes && currentMinutes < sunsetMinutes) {
         asset = ASSETS.weather.sunset
-        text =
-          padTwo(sunTimes.sunset.hour) + ':' + padTwo(sunTimes.sunset.minute)
+        text = formatSunTime(sunTimes.sunset)
       } else {
-        text =
-          padTwo(sunTimes.sunrise.hour) +
-          ':' +
-          padTwo(sunTimes.sunrise.minute)
+        text = formatSunTime(sunTimes.sunrise)
       }
     }
 
