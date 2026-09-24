@@ -127,8 +127,8 @@ for battery_state in charging empty full low medium warning; do
   battery_icon="$ASSET_DIR/battery/$battery_state.png"
   battery_icon_size=$(identify -format '%wx%h' "$battery_icon")
 
-  if [ "$battery_icon_size" != '40x40' ]; then
-    echo "Battery icon must be 40x40: $battery_icon ($battery_icon_size)" >&2
+  if [ "$battery_icon_size" != '34x34' ]; then
+    echo "Battery icon must be 34x34: $battery_icon ($battery_icon_size)" >&2
     exit 1
   fi
 done
@@ -147,6 +147,7 @@ for name in cloud-drizzle cloud-fog cloud-hail cloud-lightning cloud-moon \
   icon_size=$(identify -format '%wx%h' "$ASSET_DIR/$icon")
 
   expected_size='30x30'
+
   case "$name" in
     sunrise|sunset)
       expected_size='28x28'

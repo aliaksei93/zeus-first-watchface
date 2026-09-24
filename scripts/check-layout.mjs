@@ -43,10 +43,23 @@ const designCenterX = LAYOUT.designWidth / 2
 
 for (const [name, widget] of Object.entries({
   weekday: LAYOUT.clock.weekday,
-  sun: bounds(LAYOUT.sun.icon, LAYOUT.sun.text),
 })) {
   if (Math.abs(widget.x + widget.w / 2 - designCenterX) > 0.5) {
     throw new Error(name + ' widget is not centered')
+  }
+}
+
+const widgetGaps = [
+  ['alarm', LAYOUT.alarm.icon, LAYOUT.alarm.text],
+  ['weather', LAYOUT.weather.icon, LAYOUT.weather.text],
+  ['sun', LAYOUT.sun.text, LAYOUT.sun.icon],
+]
+
+for (const [name, left, right] of widgetGaps) {
+  const gap = right.x - (left.x + left.w)
+
+  if (gap !== 9) {
+    throw new Error(name + ' icon and text must have a 9px gap')
   }
 }
 
@@ -55,6 +68,21 @@ for (const [name, widget] of Object.entries(widgets)) {
 
   if (!contains(tapZone, widget)) {
     throw new Error(name + ' widget is outside its tap zone')
+  }
+}
+
+for (const name of ['calendar', 'schedule', 'battery', 'weather', 'sun', 'alarm']) {
+  const widget = widgets[name]
+  const tapZone = LAYOUT.interactions[name]
+  const padding = [
+    widget.x - tapZone.x,
+    widget.y - tapZone.y,
+    tapZone.x + tapZone.w - (widget.x + widget.w),
+    tapZone.y + tapZone.h - (widget.y + widget.h),
+  ]
+
+  if (Math.min(...padding) < 10) {
+    throw new Error(name + ' tap zone must have at least 10px padding')
   }
 }
 
