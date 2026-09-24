@@ -122,7 +122,7 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
       color: COLORS.primary,
       level,
       font: FONTS.interRegular,
-      alignH: hmUI.align.RIGHT,
+      alignH: hmUI.align.LEFT,
     })
 
     refresh()
