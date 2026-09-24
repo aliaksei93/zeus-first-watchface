@@ -7,16 +7,16 @@ export const LAYOUT = {
     dividerY: [163, 167, 311, 315],
   },
   alarm: {
-    icon: { x: 55, y: 123, w: 28, h: 28 },
-    text: { x: 92, y: 126, w: 124, h: 24, size: 24 },
+    icon: { x: 323, y: 123, w: 28, h: 28 },
+    text: { x: 351, y: 126, w: 84, h: 24, size: 24 },
   },
   battery: {
     enabled: false,
     icon: { x: 55, y: 331, w: 40, h: 40 },
   },
   weather: {
-    icon: { x: 335, y: 123, w: 30, h: 30 },
-    text: { x: 374, y: 126, w: 51, h: 24, size: 24 },
+    icon: { x: 55, y: 123, w: 30, h: 30 },
+    text: { x: 94, y: 126, w: 72, h: 24, size: 24 },
   },
   sun: {
     icon: { x: 192, y: 407, w: 28, h: 28 },
@@ -33,9 +33,9 @@ export const LAYOUT = {
     calendar: { x: 151, y: 53, w: 178, h: 50 },
     schedule: { x: 120, y: 322, w: 240, h: 56 },
     battery: { x: 51, y: 323, w: 48, h: 56 },
-    weather: { x: 305, y: 108, w: 140, h: 60 },
+    weather: { x: 45, y: 108, w: 140, h: 60 },
     sun: { x: 180, y: 400, w: 120, h: 56 },
-    alarm: { x: 45, y: 108, w: 185, h: 60 },
+    alarm: { x: 313, y: 108, w: 167, h: 60 },
     alarmShortcut: { x: 84, y: 195, w: 112, h: 90 },
     countdown: { x: 284, y: 195, w: 110, h: 90 },
     stopwatch: { x: 394, y: 249, w: 43, h: 46 },

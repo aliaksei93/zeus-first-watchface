@@ -1,14 +1,14 @@
-import * as hmUI from '@zos/ui'
+import * as hmUI from "@zos/ui";
 
-import { ASSETS } from '../../config/assets.ts'
-import { LAYOUT } from '../../config/layout.ts'
-import { COLORS, FONTS } from '../../config/theme.ts'
+import { ASSETS } from "../../config/assets.ts";
+import { LAYOUT } from "../../config/layout.ts";
+import { COLORS, FONTS } from "../../config/theme.ts";
 
 export function createAlarmDomain({ ui }) {
   function draw(level) {
-    const { icon, text } = LAYOUT.alarm
+    const { icon, text } = LAYOUT.alarm;
 
-    ui.createImage({ ...icon, src: ASSETS.alarm.status, level })
+    ui.createImage({ ...icon, src: ASSETS.alarm.status, level });
 
     hmUI.createWidget(hmUI.widget.TEXT_FONT, {
       x: ui.scaled(text.x),
@@ -21,13 +21,13 @@ export function createAlarmDomain({ ui }) {
       char_space: 0,
       line_space: 0,
       padding: true,
-      align_h: hmUI.align.LEFT,
+      align_h: hmUI.align.CENTER_H,
       align_v: hmUI.align.CENTER_V,
       text_style: hmUI.text_style.NONE,
       type: hmUI.data_type.ALARM_CLOCK,
       show_level: level,
-    })
+    });
   }
 
-  return { draw }
+  return { draw };
 }
