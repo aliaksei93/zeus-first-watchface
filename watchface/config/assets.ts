@@ -8,12 +8,11 @@ export const ASSETS = {
     status: ALARM_ASSET_ROOT + 'status.png',
   },
   battery: {
-    charging: BATTERY_ASSET_ROOT + 'charging.png',
     empty: BATTERY_ASSET_ROOT + 'empty.png',
     full: BATTERY_ASSET_ROOT + 'full.png',
+    high: BATTERY_ASSET_ROOT + 'high.png',
     low: BATTERY_ASSET_ROOT + 'low.png',
     medium: BATTERY_ASSET_ROOT + 'medium.png',
-    warning: BATTERY_ASSET_ROOT + 'warning.png',
   },
   interaction: {
     tap: INTERACTION_ASSET_ROOT + 'tap.png',

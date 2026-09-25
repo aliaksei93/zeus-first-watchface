@@ -16,7 +16,7 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 
-for state in charging empty full low medium warning; do
+for state in empty low medium high full; do
   source="$SOURCE_DIR/$state.svg"
   output="$OUTPUT_DIR/$state.png"
 

@@ -102,12 +102,11 @@ for asset in \
   fonts/INTER-LICENSE.txt \
   fonts/Inter-Regular.ttf \
   alarm/status.png \
-  battery/charging.png \
   battery/empty.png \
   battery/full.png \
+  battery/high.png \
   battery/low.png \
   battery/medium.png \
-  battery/warning.png \
   interaction/tap.png; do
   if [ ! -f "$ASSET_DIR/$asset" ]; then
     echo "Missing required asset: $ASSET_DIR/$asset" >&2
@@ -121,7 +120,7 @@ if [ "$alarm_icon_size" != '28x28' ]; then
   exit 1
 fi
 
-for battery_state in charging empty full low medium warning; do
+for battery_state in empty full high low medium; do
   battery_icon="$ASSET_DIR/battery/$battery_state.png"
   battery_icon_size=$(identify -format '%wx%h' "$battery_icon")
 

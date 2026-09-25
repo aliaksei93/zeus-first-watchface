@@ -31,6 +31,7 @@ function updateMinuteData() {
   clockDomain.updateTime();
   clockDomain.updateDate();
   sunDomain.update();
+  batteryDomain.refresh();
 }
 
 function pauseWatchface() {

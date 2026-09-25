@@ -3,10 +3,15 @@ import { LAYOUT } from "../../config/layout.ts";
 import * as hmUI from "@zos/ui";
 
 const BATTERY_STATES = [
-  { maximum: 0, asset: "empty" },
-  { maximum: 10, asset: "warning" },
-  { maximum: 35, asset: "low" },
-  { maximum: 70, asset: "medium" },
+  // 0–5%
+  { maximum: 5, asset: "empty" },
+  // 6–30%
+  { maximum: 30, asset: "low" },
+  // 31–60%
+  { maximum: 60, asset: "medium" },
+  // 61–89%
+  { maximum: 89, asset: "high" },
+  // 90–100%
   { maximum: 100, asset: "full" },
 ];
 
@@ -20,6 +25,7 @@ export function createBatteryDomain({ ui, batterySensor }) {
   let widget = null;
   let shownAsset = null;
   let shownLevel = null;
+  let isListening = false;
 
   function render(level) {
     const asset = getBatteryAsset(batterySensor.getCurrent());
@@ -43,20 +49,36 @@ export function createBatteryDomain({ ui, batterySensor }) {
   }
 
   function onChange() {
+    refresh();
+  }
+
+  function refresh() {
     if (shownLevel !== null) {
       render(shownLevel);
     }
   }
 
+  function subscribe() {
+    if (isListening) {
+      return;
+    }
+
+    batterySensor.onChange(onChange);
+    isListening = true;
+  }
+
   function draw(level) {
     shownLevel = level;
-    render(level);
-    batterySensor.onChange(onChange);
+    subscribe();
+    refresh();
   }
 
   function destroy() {
-    batterySensor.offChange(onChange);
+    if (isListening) {
+      batterySensor.offChange(onChange);
+      isListening = false;
+    }
   }
 
-  return { draw, destroy };
+  return { draw, refresh, destroy };
 }
