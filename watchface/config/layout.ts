@@ -20,7 +20,7 @@ export const LAYOUT = {
   },
   sun: {
     icon: { x: 164, y: 407, w: 28, h: 28 },
-    text: { x: 201, y: 410, w: 70, h: 22, size: 22 },
+    text: { x: 201, y: 409, w: 70, h: 24, size: 24 },
   },
   clock: {
     time: { x: 84, y: 195, w: 312, h: 90, size: 90 },
