@@ -26,6 +26,13 @@ export function createClockDomain({ ui, timeSensor }) {
   let normalWeekdaySystemText = null;
   let aodTimeText = null;
   let aodPeriodText = null;
+  let shownTime = null;
+  let shownPeriod = null;
+  let shown12Hour = null;
+  let shownSeconds = null;
+  let shownDate = null;
+  let shownWeekday = null;
+  let shownUseInter = null;
 
   function drawNormal(level) {
     const { time, period, seconds, date, weekday } = LAYOUT.clock;
@@ -85,13 +92,6 @@ export function createClockDomain({ ui, timeSensor }) {
   function drawAod(level) {
     const { time, period } = LAYOUT.clock;
 
-    ui.createText({
-      ...time,
-      text: "88:88",
-      color: COLORS.aodGhost,
-      level,
-      font: FONTS.digitalBold,
-    });
     aodTimeText = ui.createText({
       ...time,
       text: "",
@@ -108,27 +108,43 @@ export function createClockDomain({ ui, timeSensor }) {
     });
   }
 
-  function update() {
-    const weekdayIndex = Math.max(0, Math.min(6, timeSensor.getDay() - 1));
+  function updateTime() {
     const hours = timeSensor.getHours();
     const use12Hour = getTimeFormat() === TIME_FORMAT_12;
     const displayHours = use12Hour ? timeSensor.getFormatHour() : hours;
     const timeText = padTwo(displayHours) + ":" + padTwo(timeSensor.getMinutes());
     const periodText = hours < 12 ? "AM" : "PM";
 
-    normalTimeText.setProperty(hmUI.prop.TEXT, timeText);
-    normalPeriodText.setProperty(hmUI.prop.TEXT, periodText);
-    normalPeriodText.setProperty(hmUI.prop.VISIBLE, use12Hour);
-    normalSecondText.setProperty(
-      hmUI.prop.TEXT,
-      padTwo(timeSensor.getSeconds()),
-    );
-
-    if (aodTimeText !== null) {
+    if (shownTime !== timeText) {
+      normalTimeText.setProperty(hmUI.prop.TEXT, timeText);
       aodTimeText.setProperty(hmUI.prop.TEXT, timeText);
-      aodPeriodText.setProperty(hmUI.prop.TEXT, periodText);
-      aodPeriodText.setProperty(hmUI.prop.VISIBLE, use12Hour);
+      shownTime = timeText;
     }
+
+    if (shownPeriod !== periodText) {
+      normalPeriodText.setProperty(hmUI.prop.TEXT, periodText);
+      aodPeriodText.setProperty(hmUI.prop.TEXT, periodText);
+      shownPeriod = periodText;
+    }
+
+    if (shown12Hour !== use12Hour) {
+      normalPeriodText.setProperty(hmUI.prop.VISIBLE, use12Hour);
+      aodPeriodText.setProperty(hmUI.prop.VISIBLE, use12Hour);
+      shown12Hour = use12Hour;
+    }
+  }
+
+  function updateSeconds() {
+    const seconds = padTwo(timeSensor.getSeconds());
+
+    if (shownSeconds !== seconds) {
+      normalSecondText.setProperty(hmUI.prop.TEXT, seconds);
+      shownSeconds = seconds;
+    }
+  }
+
+  function updateDate() {
+    const weekdayIndex = Math.max(0, Math.min(6, timeSensor.getDay() - 1));
 
     const day = padTwo(timeSensor.getDate());
     const month = padTwo(timeSensor.getMonth());
@@ -147,21 +163,34 @@ export function createClockDomain({ ui, timeSensor }) {
         break;
     }
 
-    normalDateText.setProperty(hmUI.prop.TEXT, dateText);
+    if (shownDate !== dateText) {
+      normalDateText.setProperty(hmUI.prop.TEXT, dateText);
+      shownDate = dateText;
+    }
+
     const language = getLanguage();
     const weekdays = WEEKDAYS_BY_LANGUAGE[language] || WEEKDAYS_BY_LANGUAGE[2];
     const weekdayText = weekdays[weekdayIndex];
     const useInter = INTER_WEEKDAY_LANGUAGE_IDS[language] === true;
 
-    normalWeekdayInterText.setProperty(hmUI.prop.TEXT, weekdayText);
-    normalWeekdaySystemText.setProperty(hmUI.prop.TEXT, weekdayText);
-    normalWeekdayInterText.setProperty(hmUI.prop.VISIBLE, useInter);
-    normalWeekdaySystemText.setProperty(hmUI.prop.VISIBLE, !useInter);
+    if (shownWeekday !== weekdayText) {
+      normalWeekdayInterText.setProperty(hmUI.prop.TEXT, weekdayText);
+      normalWeekdaySystemText.setProperty(hmUI.prop.TEXT, weekdayText);
+      shownWeekday = weekdayText;
+    }
+
+    if (shownUseInter !== useInter) {
+      normalWeekdayInterText.setProperty(hmUI.prop.VISIBLE, useInter);
+      normalWeekdaySystemText.setProperty(hmUI.prop.VISIBLE, !useInter);
+      shownUseInter = useInter;
+    }
   }
 
   return {
     drawAod,
     drawNormal,
-    update,
+    updateDate,
+    updateSeconds,
+    updateTime,
   };
 }

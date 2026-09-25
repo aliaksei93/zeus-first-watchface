@@ -11,6 +11,8 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
   let sunTimesText = null
   let sunTimes = null
   let sunTimesDate = ''
+  let shownAsset = ASSETS.weather.sunrise
+  let shownText = '--'
 
   function getDateKey() {
     return (
@@ -71,8 +73,15 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
       }
     }
 
-    sunIcon.setProperty(hmUI.prop.SRC, asset)
-    sunTimesText.setProperty(hmUI.prop.TEXT, text)
+    if (shownAsset !== asset) {
+      sunIcon.setProperty(hmUI.prop.SRC, asset)
+      shownAsset = asset
+    }
+
+    if (shownText !== text) {
+      sunTimesText.setProperty(hmUI.prop.TEXT, text)
+      shownText = text
+    }
   }
 
   function drawCurrent(level) {
@@ -124,9 +133,6 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
       font: FONTS.interRegular,
       alignH: hmUI.align.LEFT,
     })
-
-    refresh()
-    update()
   }
 
   return {

@@ -17,16 +17,41 @@ let weatherDomain = null;
 let alarmDomain = null;
 let batteryDomain = null;
 let navigationDomain = null;
-let refreshTimer = null;
+let timeSensor = null;
+let secondsTimer = null;
+let isActive = false;
 
-function updateVisibleData() {
-  clockDomain.update();
+function updateMinuteData() {
+  if (!isActive) {
+    return;
+  }
+
+  clockDomain.updateTime();
+  clockDomain.updateDate();
   weatherDomain.update();
 }
 
-function refreshDynamicData() {
+function pauseWatchface() {
+  isActive = false;
+
+  if (secondsTimer !== null) {
+    clearInterval(secondsTimer);
+    secondsTimer = null;
+  }
+}
+
+function resumeWatchface() {
+  if (isActive) {
+    return;
+  }
+
+  isActive = true;
   weatherDomain.refresh();
-  updateVisibleData();
+  updateMinuteData();
+  clockDomain.updateSeconds();
+  secondsTimer = setInterval(function () {
+    clockDomain.updateSeconds();
+  }, 1000);
 }
 
 WatchFace({
@@ -42,10 +67,6 @@ WatchFace({
       batteryDomain.draw(level);
     }
     navigationDomain.draw(level);
-
-    hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
-      resume_call: refreshDynamicData,
-    });
   },
 
   drawAod() {
@@ -62,7 +83,7 @@ WatchFace({
       screenHeight: deviceInfo.height,
       designWidth: LAYOUT.designWidth,
     });
-    const timeSensor = new Time();
+    timeSensor = new Time();
 
     frame = createFrame({ ui });
     clockDomain = createClockDomain({ ui, timeSensor });
@@ -82,16 +103,18 @@ WatchFace({
   build() {
     this.drawNormal();
     this.drawAod();
-    refreshDynamicData();
-    refreshTimer = setInterval(updateVisibleData, 1000);
+    timeSensor.onPerMinute(updateMinuteData);
+
+    hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
+      resume_call: resumeWatchface,
+      pause_call: pauseWatchface,
+    });
+
+    resumeWatchface();
   },
 
   onDestroy() {
     batteryDomain.destroy();
-
-    if (refreshTimer !== null) {
-      clearInterval(refreshTimer);
-      refreshTimer = null;
-    }
+    pauseWatchface();
   },
 });
