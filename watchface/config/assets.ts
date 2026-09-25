@@ -18,7 +18,7 @@ export const ASSETS = {
   interaction: {
     tap: INTERACTION_ASSET_ROOT + 'tap.png',
   },
-  weather: {
+  sun: {
     sunrise: WEATHER_ASSET_ROOT + 'sunrise.png',
     sunset: WEATHER_ASSET_ROOT + 'sunset.png',
   },

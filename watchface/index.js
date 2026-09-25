@@ -7,6 +7,7 @@ import { createAlarmDomain } from "./domains/alarm/index.js";
 import { createBatteryDomain } from "./domains/battery/index.js";
 import { createClockDomain } from "./domains/clock/index.js";
 import { createNavigationDomain } from "./domains/navigation/index.js";
+import { createSunDomain } from "./domains/sun/index.js";
 import { createWeatherDomain } from "./domains/weather/index.js";
 import { createFrame } from "./shell/frame.js";
 import { createUi } from "./shared/ui.js";
@@ -14,6 +15,7 @@ import { createUi } from "./shared/ui.js";
 let frame = null;
 let clockDomain = null;
 let weatherDomain = null;
+let sunDomain = null;
 let alarmDomain = null;
 let batteryDomain = null;
 let navigationDomain = null;
@@ -28,7 +30,7 @@ function updateMinuteData() {
 
   clockDomain.updateTime();
   clockDomain.updateDate();
-  weatherDomain.update();
+  sunDomain.update();
 }
 
 function pauseWatchface() {
@@ -46,7 +48,7 @@ function resumeWatchface() {
   }
 
   isActive = true;
-  weatherDomain.refresh();
+  sunDomain.refresh();
   updateMinuteData();
   clockDomain.updateSeconds();
   secondsTimer = setInterval(function () {
@@ -59,8 +61,8 @@ WatchFace({
     const level = hmUI.show_level.ONLY_NORMAL;
 
     frame.drawNormal(level);
-    weatherDomain.drawCurrent(level);
-    weatherDomain.drawSun(level);
+    weatherDomain.draw(level);
+    sunDomain.draw(level);
     clockDomain.drawNormal(level);
     alarmDomain.draw(level);
     if (LAYOUT.battery.enabled) {
@@ -87,7 +89,8 @@ WatchFace({
 
     frame = createFrame({ ui });
     clockDomain = createClockDomain({ ui, timeSensor });
-    weatherDomain = createWeatherDomain({
+    weatherDomain = createWeatherDomain({ ui });
+    sunDomain = createSunDomain({
       ui,
       timeSensor,
       weatherSensor: new Weather(),

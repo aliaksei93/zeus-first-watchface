@@ -1,90 +1,11 @@
 import * as hmUI from '@zos/ui'
-import { getTimeFormat, TIME_FORMAT_12 } from '@zos/settings'
 
-import { ASSETS, WEATHER_ICONS } from '../../config/assets.ts'
+import { WEATHER_ICONS } from '../../config/assets.ts'
 import { LAYOUT } from '../../config/layout.ts'
 import { COLORS, FONTS } from '../../config/theme.ts'
-import { padTwo } from '../../shared/format.js'
 
-export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
-  let sunIcon = null
-  let sunTimesText = null
-  let sunTimes = null
-  let sunTimesDate = ''
-  let shownAsset = ASSETS.weather.sunrise
-  let shownText = '--'
-
-  function getDateKey() {
-    return (
-      timeSensor.getFullYear() +
-      '-' +
-      padTwo(timeSensor.getMonth()) +
-      '-' +
-      padTwo(timeSensor.getDate())
-    )
-  }
-
-  function formatSunTime(time) {
-    const hours =
-      getTimeFormat() === TIME_FORMAT_12
-        ? ((time.hour + 11) % 12) + 1
-        : time.hour
-
-    return padTwo(hours) + ':' + padTwo(time.minute)
-  }
-
-  function refresh() {
-    sunTimesDate = getDateKey()
-    sunTimes = null
-
-    try {
-      const forecast = weatherSensor.getForecast()
-
-      if (forecast && forecast.tideData && forecast.tideData.count > 0) {
-        sunTimes = forecast.tideData.data[0]
-      }
-    } catch (error) {
-      sunTimes = null
-    }
-  }
-
-  function update() {
-    if (sunIcon === null || sunTimesText === null) {
-      return
-    }
-
-    if (sunTimesDate !== getDateKey()) {
-      refresh()
-    }
-
-    let asset = ASSETS.weather.sunrise
-    let text = '--'
-
-    if (sunTimes !== null) {
-      const currentMinutes = timeSensor.getHours() * 60 + timeSensor.getMinutes()
-      const sunriseMinutes = sunTimes.sunrise.hour * 60 + sunTimes.sunrise.minute
-      const sunsetMinutes = sunTimes.sunset.hour * 60 + sunTimes.sunset.minute
-
-      if (currentMinutes >= sunriseMinutes && currentMinutes < sunsetMinutes) {
-        asset = ASSETS.weather.sunset
-        text = formatSunTime(sunTimes.sunset)
-      } else {
-        text = formatSunTime(sunTimes.sunrise)
-      }
-    }
-
-    if (shownAsset !== asset) {
-      sunIcon.setProperty(hmUI.prop.SRC, asset)
-      shownAsset = asset
-    }
-
-    if (shownText !== text) {
-      sunTimesText.setProperty(hmUI.prop.TEXT, text)
-      shownText = text
-    }
-  }
-
-  function drawCurrent(level) {
+export function createWeatherDomain({ ui }) {
+  function draw(level) {
     const { icon, text } = LAYOUT.weather
 
     hmUI.createWidget(hmUI.widget.IMG_LEVEL, {
@@ -117,28 +38,5 @@ export function createWeatherDomain({ ui, timeSensor, weatherSensor }) {
     })
   }
 
-  function drawSun(level) {
-    const { icon, text } = LAYOUT.sun
-
-    sunIcon = ui.createImage({
-      ...icon,
-      src: ASSETS.weather.sunrise,
-      level,
-    })
-    sunTimesText = ui.createText({
-      ...text,
-      text: '--',
-      color: COLORS.primary,
-      level,
-      font: FONTS.interRegular,
-      alignH: hmUI.align.LEFT,
-    })
-  }
-
-  return {
-    drawCurrent,
-    drawSun,
-    refresh,
-    update,
-  }
+  return { draw }
 }
