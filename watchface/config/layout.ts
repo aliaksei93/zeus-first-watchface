@@ -11,7 +11,6 @@ export const LAYOUT = {
     text: { x: 92, y: 127, w: 72, h: 24, size: 24 },
   },
   battery: {
-    enabled: true,
     icon: { x: 284, y: 406, w: 32, h: 32 },
   },
   weather: {

@@ -65,9 +65,7 @@ WatchFace({
     sunDomain.draw(level);
     clockDomain.drawNormal(level);
     alarmDomain.draw(level);
-    if (LAYOUT.battery.enabled) {
-      batteryDomain.draw(level);
-    }
+    batteryDomain.draw(level);
     navigationDomain.draw(level);
   },
 

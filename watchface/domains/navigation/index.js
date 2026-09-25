@@ -57,9 +57,7 @@ export function createNavigationDomain({ ui }) {
 
     createCalendarTapZone(level)
     createEventTapZone(level)
-    if (LAYOUT.battery.enabled) {
-      createTapZone(interactions.battery, hmUI.data_type.BATTERY, level)
-    }
+    createTapZone(interactions.battery, hmUI.data_type.BATTERY, level)
     createTapZone(interactions.weather, hmUI.data_type.WEATHER_CURRENT, level)
     createTapZone(interactions.sun, hmUI.data_type.SUN_CURRENT, level)
     createTapZone(interactions.alarm, hmUI.data_type.ALARM_CLOCK, level)
