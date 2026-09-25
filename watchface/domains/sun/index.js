@@ -10,6 +10,7 @@ export function createSunDomain({ ui, timeSensor, weatherSensor }) {
   let sunIcon = null
   let sunTimesText = null
   let sunTimes = null
+  let nextSunrise = null
   let sunTimesDate = ''
   let shownAsset = ASSETS.sun.sunrise
   let shownText = '--'
@@ -36,15 +37,19 @@ export function createSunDomain({ ui, timeSensor, weatherSensor }) {
   function refresh() {
     sunTimesDate = getDateKey()
     sunTimes = null
+    nextSunrise = null
 
     try {
       const forecast = weatherSensor.getForecast()
 
       if (forecast && forecast.tideData && forecast.tideData.count > 0) {
         sunTimes = forecast.tideData.data[0]
+        nextSunrise =
+          forecast.tideData.count > 1 ? forecast.tideData.data[1].sunrise : null
       }
     } catch (error) {
       sunTimes = null
+      nextSunrise = null
     }
   }
 
@@ -65,11 +70,13 @@ export function createSunDomain({ ui, timeSensor, weatherSensor }) {
       const sunriseMinutes = sunTimes.sunrise.hour * 60 + sunTimes.sunrise.minute
       const sunsetMinutes = sunTimes.sunset.hour * 60 + sunTimes.sunset.minute
 
-      if (currentMinutes >= sunriseMinutes && currentMinutes < sunsetMinutes) {
+      if (currentMinutes < sunriseMinutes) {
+        text = formatSunTime(sunTimes.sunrise)
+      } else if (currentMinutes < sunsetMinutes) {
         asset = ASSETS.sun.sunset
         text = formatSunTime(sunTimes.sunset)
-      } else {
-        text = formatSunTime(sunTimes.sunrise)
+      } else if (nextSunrise !== null) {
+        text = formatSunTime(nextSunrise)
       }
     }
 
