@@ -54,14 +54,14 @@ const widgetGaps = [
   ['alarm', LAYOUT.alarm.icon, LAYOUT.alarm.text],
   ['weather', LAYOUT.weather.text, LAYOUT.weather.icon],
   ['sun', LAYOUT.sun.icon, LAYOUT.sun.text],
-  ['sun and battery', LAYOUT.sun.text, LAYOUT.battery.icon],
+  ['sun and battery', LAYOUT.sun.text, LAYOUT.battery.icon, 13],
 ]
 
-for (const [name, left, right] of widgetGaps) {
+for (const [name, left, right, expectedGap = 9] of widgetGaps) {
   const gap = right.x - (left.x + left.w)
 
-  if (gap !== 9) {
-    throw new Error(name + ' icon and text must have a 9px gap')
+  if (gap !== expectedGap) {
+    throw new Error(name + ' icon and text must have a ' + expectedGap + 'px gap')
   }
 }
 
