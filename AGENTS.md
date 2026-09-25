@@ -36,7 +36,7 @@
 - Never silently switch to Computer Use, a browser extension, or another browser-control mechanism. If Chrome DevTools MCP cannot attach, report the exact blocker and ask before using a fallback.
 - After connecting, verify that the Penpot MCP tools are available and make one small read-only request before collecting the design diff. Treat version-mismatch warnings as compatibility risks, not connection failures.
 - Keep reads targeted and use screenshots only for visual verification. State the actual browser-control mechanism in the final report.
-- At handoff, report whether the local MCP process is still running. Stop a task-owned process after the sync unless the user asks to keep it available.
+- Keep the local MCP process running between design-sync tasks; do not stop it automatically at handoff. At handoff, report whether it is still running and its PID when known. Stop it only when the user explicitly asks.
 
 ## Project Structure & Module Organization
 

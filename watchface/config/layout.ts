@@ -12,15 +12,15 @@ export const LAYOUT = {
   },
   battery: {
     enabled: true,
-    icon: { x: 284, y: 407, w: 28, h: 28 },
+    icon: { x: 283, y: 407, w: 30, h: 30 },
   },
   weather: {
     text: { x: 335, y: 127, w: 51, h: 24, size: 24 },
     icon: { x: 395, y: 124, w: 30, h: 30 },
   },
   sun: {
-    icon: { x: 168, y: 407, w: 28, h: 28 },
-    text: { x: 205, y: 410, w: 70, h: 22, size: 22 },
+    icon: { x: 167, y: 407, w: 28, h: 28 },
+    text: { x: 204, y: 410, w: 70, h: 22, size: 22 },
   },
   clock: {
     time: { x: 84, y: 195, w: 312, h: 90, size: 90 },
@@ -32,9 +32,9 @@ export const LAYOUT = {
   interactions: {
     calendar: { x: 151, y: 53, w: 178, h: 50 },
     schedule: { x: 146, y: 320, w: 188, h: 52 },
-    battery: { x: 280, y: 397, w: 36, h: 48 },
+    battery: { x: 279, y: 397, w: 39, h: 48 },
     weather: { x: 325, y: 114, w: 110, h: 50 },
-    sun: { x: 158, y: 397, w: 122, h: 48 },
+    sun: { x: 158, y: 397, w: 121, h: 48 },
     alarm: { x: 45, y: 114, w: 129, h: 50 },
     alarmShortcut: { x: 84, y: 195, w: 112, h: 90 },
     countdown: { x: 284, y: 195, w: 110, h: 90 },
