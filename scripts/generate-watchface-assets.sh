@@ -26,7 +26,7 @@ for state in charging empty full low medium warning; do
   fi
 
   magick -background none -density 1152 "$source" \
-    -filter Lanczos -resize 30x30 -gravity center -extent 30x30 \
+    -filter Lanczos -resize 32x32 -gravity center -extent 32x32 \
     "PNG32:$output"
 done
 
